@@ -1,52 +1,58 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, SafeAreaView, StatusBar, Platform } from 'react-native';
 
-// Placeholder pour les images (remplacez par vos propres chemins ou URL)
-const LOGO_IMAGE = require('../../assets/images/logo.png'); // Remplacez par le chemin de votre logo
-const USER_IMAGE = require('../../assets/images/user.png'); // Remplacez par le chemin de votre image utilisateur
+// Placeholder pour les images
+const LOGO_IMAGE = require('../../assets/images/logo.png');
+const USER_IMAGE = require('../../assets/images/user.png');
 
 const Header = ({ title = 'Tracker CLI' }) => {
   return (
-    <View style={styles.headerContainer}>
-      {/* Logo à gauche */}
-      <Image source={LOGO_IMAGE} style={styles.logo} />
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.headerContainer}>
+          {/* Logo à gauche */}
+          <Image source={LOGO_IMAGE} style={styles.logo} />
 
-      {/* Titre au centre */}
-      <Text style={styles.title}>{title}</Text>
+          {/* Titre au centre */}
+          <Text style={styles.title}>{title}</Text>
 
-      {/* Cercle pour l'image utilisateur à droite */}
-      <Image source={USER_IMAGE} style={styles.userImage} />
-    </View>
+          {/* Cercle pour l'image utilisateur à droite */}
+          <Image source={USER_IMAGE} style={styles.userImage} />
+        </View>
+      </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
-    backgroundColor: '#fff', // Couleur de fond personnalisable
+    backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
   logo: {
     width: 40,
     height: 40,
-    resizeMode: 'contain', // Ajuste l'image sans déformation
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    flex: 1, // Permet au titre de prendre l'espace restant
+    flex: 1,
     textAlign: 'center',
   },
   userImage: {
     width: 40,
     height: 40,
-    borderRadius: 20, // Moitié de la largeur/hauteur pour un cercle parfait
-    resizeMode: 'cover', // Couvre l'espace tout en conservant les proportions
+    borderRadius: 20,
+    resizeMode: 'cover',
   },
 });
 

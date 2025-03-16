@@ -1,38 +1,40 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-// Icônes placeholders (remplacez par vos images)
+// Importer les images PNG
 const icons = {
-  home: require('../../assets/images/training.png'),
-  workout: require('../../assets/images/nutrition.png'),
-  profile: require('../../assets/images/sleep.png'),
-  settings: require('../../assets/images/bracelet.png'),
+  Home: require('../../assets/icon/home.png'),
+  Nutrition: require('../../assets/icon/nutrition.png'),
+  Workout: require('../../assets/icon/training.png'),
+  Profile: require('../../assets/icon/profile.png'),
+  Settings: require('../../assets/icon/settings.png'),
 };
 
 const Footer = () => {
   const navigation = useNavigation();
 
   const navItems = [
-    { name: 'training', icon: icons.home, screen: 'training' },
-    { name: 'nutrition', icon: icons.workout, screen: 'nutrition' },
-    { name: 'sleep', icon: icons.profile, screen: 'sleep' },
-    { name: 'bracelet', icon: icons.settings, screen: 'bracelet' },
+    { name: 'Home', screen: 'HomeScreen' },
+    { name: 'Nutrition', screen: 'nutrition' },
+    { name: 'Workout', screen: 'training' },
+    { name: 'Profile', screen: 'profile' },
+    { name: 'Settings', screen: 'settings' },
   ];
 
   return (
-    <View style={styles.footerContainer}>
-      {navItems.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.navItem}
-          onPress={() => navigation.navigate(item.screen)}
-        >
-          <Image source={item.icon} style={styles.icon} />
-          <Text style={styles.navText}>{item.navName}</Text>
-        </TouchableOpacity>
-      ))}
-    </View>
+      <View style={styles.footerContainer}>
+        {navItems.map((item, index) => (
+            <TouchableOpacity
+                key={index}
+                style={styles.navItem}
+                onPress={() => navigation.navigate(item.screen)}
+            >
+              <Image source={icons[item.name]} style={styles.icon} />
+              <Text style={styles.navText}>{item.name}</Text>
+            </TouchableOpacity>
+        ))}
+      </View>
   );
 };
 
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 24,
     height: 24,
-    resizeMode: 'contain',
+    resizeMode: 'contain', // Pour garder les proportions
   },
   navText: {
     fontSize: 12,
