@@ -1,125 +1,141 @@
-import { StyleSheet, Dimensions } from 'react-native';
-
-// Récupération des dimensions de l'écran
-const { width } = Dimensions.get('window');
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+    // Conteneurs principaux
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f5f5f5'
     },
     content: {
         flex: 1,
-        padding: 16,
+        padding: 16
     },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 16,
-        color: '#333',
 
-    },
-    emptyText: {
-        textAlign: 'center',
-        marginTop: 50,
-        fontSize: 16,
-        color: '#888',
-    },
-    workoutCard: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    workoutName: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 6,
-        color: '#333',
-    },
-    workoutDetail: {
-        fontSize: 14,
-        color: '#666',
-    },
-    addButton: {
+    // En-têtes et titres
+    headerContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#3498db',
-        borderRadius: 30,
-        padding: 15,
-        position: 'absolute',
-        bottom: 20,
-        alignSelf: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-        width: width * 0.8,
-    },
-    addButtonText: {
-        color: 'white',
-        fontWeight: 'bold',
-        marginLeft: 8,
-        fontSize: 16,
-    },
-    workoutHeader: {
-        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
     },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    backButtonText: {
-        fontSize: 16,
-        marginLeft: 4,
-        color: '#333',
-    },
-    workoutTitle: {
+    sectionTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginLeft: 12,
         flex: 1,
-        color: '#333',
+        textAlign: 'center',
     },
-    exerciseCard: {
-        flexDirection: 'row',
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
+    addButton: {
+        padding: 5,
+    },
+    backButton: {
+        padding: 5,
+    },
+
+    // États vides
+    emptyState: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        paddingHorizontal: 30,
+    },
+    emptyStateText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 8,
+    },
+    emptyStateSubText: {
+        fontSize: 14,
+        textAlign: 'center',
+        color: '#666',
+    },
+    emptyHistoryState: {
+        padding: 20,
+        alignItems: 'center',
+    },
+
+    // Liste des séances
+    sessionItem: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 10,
+        elevation: 2,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    sessionInfo: {
+        flex: 1,
+    },
+    sessionName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    sessionDate: {
+        fontSize: 12,
+        color: '#666',
+    },
+
+    // Liste des exercices
+    exerciseItem: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 10,
         elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     exerciseInfo: {
         flex: 1,
     },
     exerciseName: {
         fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 4,
-        color: '#333',
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
-    exerciseDetail: {
-        fontSize: 14,
+    lastPerformance: {
+        fontSize: 12,
         color: '#666',
     },
-    historyButton: {
-        padding: 8,
+    exerciseActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
+
+    // Boutons d'action
+    deleteButton: {
+        padding: 5,
+    },
+    historyButton: {
+        padding: 5,
+        marginRight: 10,
+    },
+    clearHistoryButton: {
+        backgroundColor: '#FF5252',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 15,
+        marginBottom: 10,
+    },
+    clearHistoryText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+
+    // Modales
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -127,89 +143,127 @@ export default StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-        backgroundColor: 'white',
-        borderRadius: 12,
+        backgroundColor: '#fff',
+        borderRadius: 10,
         padding: 20,
-        width: width * 0.9,
-        maxHeight: '80%',
+        width: '85%',
+        elevation: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
-        elevation: 5,
+    },
+    historyModalContent: {
+        height: '70%',
+        width: '90%',
+    },
+    historyModalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
     },
     modalTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
+        marginBottom: 15,
+    },
+    closeButton: {
+        padding: 5,
+    },
+
+    // Formulaires et inputs
+    inputLabel: {
+        fontSize: 14,
+        fontWeight: '500',
+        marginBottom: 5,
         color: '#333',
     },
     input: {
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 16,
-        fontSize: 16,
+        borderColor: '#e0e0e0',
     },
-    notesInput: {
-        height: 100,
+    textArea: {
+        height: 80,
         textAlignVertical: 'top',
     },
     modalButtons: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10,
     },
     modalButton: {
         flex: 1,
-        borderRadius: 8,
         padding: 12,
+        borderRadius: 5,
         alignItems: 'center',
-        marginHorizontal: 5,
+    },
+    saveButton: {
+        backgroundColor: '#4CAF50',
+        marginLeft: 10,
+    },
+    saveButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
     },
     cancelButton: {
-        backgroundColor: '#ddd',
+        backgroundColor: '#f0f0f0',
+        marginRight: 10,
     },
-    confirmButton: {
-        backgroundColor: '#3498db',
-    },
-    modalButtonText: {
-        fontWeight: 'bold',
-        fontSize: 16,
+    cancelButtonText: {
         color: '#333',
     },
-    performanceHistory: {
-        marginTop: 12,
-    },
+
+    // Historique des performances
     historyItem: {
         backgroundColor: '#f9f9f9',
         borderRadius: 8,
         padding: 12,
+        marginBottom: 10,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+    },
+    historyHeader: {
         marginBottom: 8,
     },
     historyDate: {
-        fontSize: 12,
-        color: '#888',
-        marginBottom: 4,
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#2196F3',
     },
     historyDetails: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        marginBottom: 8,
     },
-    historyValue: {
-        fontSize: 14,
-        color: '#333',
+    historyDetail: {
+        alignItems: 'center',
+        flex: 1,
     },
-    historyLabel: {
+    historyDetailLabel: {
         fontSize: 12,
         color: '#666',
+        marginBottom: 3,
+    },
+    historyDetailValue: {
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     historyNotes: {
-        marginTop: 6,
+        marginTop: 8,
+        padding: 8,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
+    },
+    historyNotesLabel: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 3,
+    },
+    historyNotesText: {
         fontSize: 14,
-        color: '#555',
-        fontStyle: 'italic',
     }
 });
