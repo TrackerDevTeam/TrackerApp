@@ -8,7 +8,7 @@ const HomeScreen = () => {
         <View style={styles.container}>
             <Header title="Accueil" />
             <View style={styles.content}>
-                <Text>Bienvenue dans Tracker notre projet de M2</Text>
+                <Text>Bienvenue dans Tracker notre projet de M2...</Text>
             </View>
         </View>
     );
