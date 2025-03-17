@@ -9,7 +9,6 @@ const HomeScreen = () => {
             <Header title="Accueil" />
             <View style={styles.content}>
                 <Text>Bienvenue dans Tracker notre projet de M2</Text>
-                <Image source={require('../assets/icon/home.png')} style={{ width: 50, height: 50 }} />
             </View>
         </View>
     );
