@@ -1,18 +1,9 @@
 # Tracker
-
-Project Tracker...
-
+Project Tracker...test
 ## Utilisation
-
-### CANVA -> https://www.canva.com/design/DAGeIYRg-w0/gvi5Jp8LQM78qt4cM07VQg/edit
-### NOTION -> https://www.notion.so/PROJET-M2-1b29d51d98d9808799e1ee1c2a38dd52
-
 ## TODO
-...
-
 ---
 # Nomenclature pour Projet JavaScript/React Native
-
 ## Règles de Code
 
 <table border="1" style="border-collapse: collapse; width: 100%;">
