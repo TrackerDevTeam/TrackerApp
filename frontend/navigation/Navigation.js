@@ -1,13 +1,25 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Exemple d'icônes
+import { Image } from 'react-native'; // Ajout de Image
 import HomeScreen from '../screens/HomeScreen';
 import NutritionScreen from '../screens/NutritionScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+
+// Importation des images personnalisées
+import homeIcon from '../assets/icon/home.png';
+import homeIconFocused from '../assets/icon/home.png';
+import nutritionIcon from '../assets/icon/nutrition.png';
+import nutritionIconFocused from '../assets/icon/nutrition.png';
+import workoutIcon from '../assets/icon/training.png';
+import workoutIconFocused from '../assets/icon/training.png';
+import profileIcon from '../assets/icon/profile.png';
+import profileIconFocused from '../assets/icon/profile.png';
+import settingsIcon from '../assets/icon/settings.png';
+import settingsIconFocused from '../assets/icon/settings.png';
+// Ajoute les autres images de la même manière...
 
 const Tab = createBottomTabNavigator();
 
@@ -18,31 +30,32 @@ const Navigation = () => {
                 screenOptions={({ route }) => ({
                     headerShown: false,
                     tabBarStyle: {
-                        backgroundColor: '#222', // Couleur de fond (à adapter selon ton footer)
+                        backgroundColor: '#fff',
                         borderTopWidth: 0,
                         paddingBottom: 10,
                         paddingTop: 10,
                         height: 60,
                     },
                     tabBarIcon: ({ focused, color, size }) => {
-                        let iconName;
+                        let iconSource;
 
                         if (route.name === 'Home') {
-                            iconName = focused ? 'home' : 'home-outline';
+                            iconSource = focused ? homeIconFocused : homeIcon;
                         } else if (route.name === 'Nutrition') {
-                            iconName = focused ? 'nutrition' : 'nutrition-outline';
+                            iconSource = focused ? nutritionIconFocused : nutritionIcon;
                         } else if (route.name === 'Workout') {
-                            iconName = focused ? 'barbell' : 'barbell-outline';
+                            iconSource = focused ? workoutIconFocused : workoutIcon; // À définir
                         } else if (route.name === 'Profile') {
-                            iconName = focused ? 'person' : 'person-outline';
+                            iconSource = focused ? profileIconFocused : profileIcon; // À définir
                         } else if (route.name === 'Settings') {
-                            iconName = focused ? 'settings' : 'settings-outline';
+                            iconSource = focused ? settingsIconFocused : settingsIcon; // À définir
                         }
 
-                        return <Ionicons name={iconName} size={size} color={color} />;
+                        return <Image source={iconSource} style={{ width: size, height: size }} />;
                     },
-                    tabBarActiveTintColor: '#FFD700', // Couleur active (ex: doré)
-                    tabBarInactiveTintColor: '#aaa', // Couleur inactive
+                    tabBarLabel: () => null, // Pas de texte
+                    tabBarActiveTintColor: '#FFD700',
+                    tabBarInactiveTintColor: '#aaa',
                 })}
                 initialRouteName="Home"
             >
