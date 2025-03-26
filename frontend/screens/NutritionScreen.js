@@ -22,6 +22,7 @@ const NutritionScreen = () => {
       setError('Veuillez entrer un aliment');
       return;
     }
+
     
     try {
       const response = await fetch(`http://192.168.1.79:5000/search?query=${query}`);

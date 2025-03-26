@@ -1,8 +1,8 @@
 module.exports = {
     apps: [
       {
-        name: "backend",
-        script: "backend/serveur.js",
+        name: "nutrition_api.js",
+        script: "backend/nutrition_api.js",
         watch: true,  // Redémarre si le fichier change
       },
     ],
