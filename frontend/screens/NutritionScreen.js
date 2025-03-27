@@ -10,8 +10,10 @@ const NutritionScreen = () => {
   const [meals, setMeals] = useState({
     breakfast: [],
     lunch: [],
+    snack: [],
     dinner: []
   });
+  const [weight, setWeight] = useState('');
   const [error, setError] = useState('');
   
   const fetchProduct = async (type) => {
@@ -25,7 +27,7 @@ const NutritionScreen = () => {
 
     
     try {
-      const response = await fetch(`http://192.168.1.79:5000/search?query=${query}`);
+      const response = await fetch(`http://192.168.1.79:5000/search?query=${query}&weight=${weight}`);
       const data = await response.json();
       
       if (data.error) {
@@ -36,6 +38,8 @@ const NutritionScreen = () => {
           setMeals({...meals, breakfast: [...meals.breakfast, data]});
         } else if (type === 'lunch') {
           setMeals({...meals, lunch: [...meals.lunch, data]});
+        } else if (type === 'snack') {
+          setMeals({...meals, snack: [...meals.snack, data]});
         } else if (type === 'dinner') {
           setMeals({...meals, dinner: [...meals.dinner, data]});
         }
@@ -54,10 +58,15 @@ const NutritionScreen = () => {
       return {
         calories: totals.calories + (parseFloat(item.calories) || 0),
         proteins: totals.proteins + (parseFloat(item.proteins) || 0),
-        carbohydrates: totals.carbohydrates + (parseFloat(item.carbohydrates) || 0),
-        fat: totals.fat + (parseFloat(item.fat) || 0)
+        glucides: totals.glucides + (parseFloat(item.glucides) || 0),
+        include_sugar: totals.include_sugar + (parseFloat(item.include_sugar) || 0),
+        lipides: totals.lipides + (parseFloat(item.lipides) || 0),
+        fibers: totals.fibers + (parseFloat(item.fibers) || 0),
+        salt: totals.salt + (parseFloat(item.salt) || 0),
+        vitamins: totals.vitamins + (parseFloat(item.vitamins) || 0),
+        minerals: totals.minerals + (parseFloat(item.minerals) || 0),
       };
-    }, { calories: 0, proteins: 0, carbohydrates: 0, fat: 0 });
+    }, { calories: 0, proteins: 0, glucides: 0, include_sugar: 0, lipides: 0, fibers: 0, salt: 0, vitamins: 0, minerals: 0 });
   };
   
   // Composant pour afficher les totaux nutritionnels
@@ -70,8 +79,13 @@ const NutritionScreen = () => {
         <View style={styles.totalsContent}>
           <Text style={styles.totalItem}>Calories: {totals.calories.toFixed(1)} kcal</Text>
           <Text style={styles.totalItem}>Protéines: {totals.proteins.toFixed(1)} g</Text>
-          <Text style={styles.totalItem}>Glucides: {totals.carbohydrates.toFixed(1)} g</Text>
-          <Text style={styles.totalItem}>Lipides: {totals.fat.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Glucides: {totals.glucides.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>dont sucres: {totals.include_sugar.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Lipides: {totals.lipides.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Fibres: {totals.fibers.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Sel: {totals.salt.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Vitamines: {totals.vitamins.toFixed(1)} g</Text>
+          <Text style={styles.totalItem}>Minéraux: {totals.minerals.toFixed(1)} g</Text>
         </View>
       </View>
     );
@@ -92,8 +106,6 @@ const NutritionScreen = () => {
           <View style={styles.mealNutrition}>
             <Text>Calories: {item.calories} kcal</Text>
             <Text>Protéines: {item.proteins} g</Text>
-            <Text>Glucides: {item.carbohydrates} g</Text>
-            <Text>Lipides: {item.fat} g</Text>
           </View>
         </View>
       </View>
@@ -115,6 +127,18 @@ const NutritionScreen = () => {
               onChangeText={(text) => {
                 setMealType('breakfast');
                 setQuery(text);
+              }}
+              onSubmitEditing={() => fetchProduct('breakfast')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+                placeholder="Entrez le grammage (ex: 100g)"
+                value={mealType === 'breakfast' ? weight : ''}
+              onChangeText={(text) => {
+                setMealType('breakfast');
+                setWeight(text);
               }}
               onSubmitEditing={() => fetchProduct('breakfast')}
             />
@@ -146,6 +170,18 @@ const NutritionScreen = () => {
               }}
               onSubmitEditing={() => fetchProduct('lunch')}
             />
+          </View>
+          <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Entrez le grammage (ex: 100g)"
+                value={mealType === 'lunch' ? weight : ''}
+              onChangeText={(text) => {
+                setMealType('lunch');
+                setWeight(text);
+              }}
+              onSubmitEditing={() => fetchProduct('lunch')}
+            />
             <TouchableOpacity 
               style={styles.addButton}
               onPress={() => fetchProduct('lunch')}
@@ -158,7 +194,47 @@ const NutritionScreen = () => {
           
           {/* Afficher les totaux du déjeuner */}
           {meals.lunch.length > 0 && <NutritionTotals mealItems={meals.lunch} />}
-        </View>
+          </View>
+
+          {/* Collation */}
+          <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Collation</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Entrez un aliment"
+              value={mealType === 'snack' ? query : ''}
+              onChangeText={(text) => {
+                setMealType('snack');
+                setQuery(text);
+              }}
+              onSubmitEditing={() => fetchProduct('snack')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Entrez le grammage (ex: 100g)"
+              value={mealType === 'snack' ? weight : ''}
+              onChangeText={(text) => {
+                setMealType('snack');
+                setWeight(text);
+              }}
+              onSubmitEditing={() => fetchProduct('snack')}
+            />
+            <TouchableOpacity 
+              style={styles.addButton}
+              onPress={() => fetchProduct('snack')}
+            >
+              <Text style={styles.addButtonText}>+</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {meals.snack.map((item, index) => renderMealItem(item, index))}
+          
+          {/* Afficher les totaux du déjeuner */}
+          {meals.snack.length > 0 && <NutritionTotals mealItems={meals.snack} />}
+          </View>
         
         {/* Dîner */}
         <View style={styles.section}>
@@ -171,6 +247,18 @@ const NutritionScreen = () => {
               onChangeText={(text) => {
                 setMealType('dinner');
                 setQuery(text);
+              }}
+              onSubmitEditing={() => fetchProduct('dinner')}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Entrez le grammage (ex: 100g)"
+              value={mealType === 'dinner' ? weight : ''}
+              onChangeText={(text) => {
+                setMealType('dinner');
+                setWeight(text);
               }}
               onSubmitEditing={() => fetchProduct('dinner')}
             />
