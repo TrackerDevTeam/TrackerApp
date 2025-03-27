@@ -1,0 +1,50 @@
+{
+  "product_name": "radis",
+  "quantity": "100g",
+  "nutrition": {
+    "calories": "16 kcal",
+    "proteines": "0.7 g",
+    "glucides": "3.4 g",
+    "dont_sucres": "1.9 g",
+    "acides_gras_satures": "0.1 g",
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": "0.1 g",
+        "omega6": "0.1 g"
+      },
+      "monoinsatures": {
+        "omega9": "0.0 g"
+      }
+    },
+    "fibres": "1.6 g",
+    "vitamines": {
+      "A": "7 µg",
+      "B": {
+        "B1": "0.02 µg",
+        "B2": "0.03 µg",
+        "B3": "0.2 mg",
+        "B5": "0.1 mg",
+        "B6": "0.1 mg",
+        "B8": "0.0 µg",
+        "B9": "25 µg",
+        "B12": "0.0 µg"
+      },
+      "C": "14 mg",
+      "D": "0 µg",
+      "E": "0.1 mg",
+      "K": "1.3 µg"
+    },
+    "mineraux": {
+      "calcium": "25 mg",
+      "sodium": "39 mg",
+      "magnesium": "10 mg",
+      "potassium": "252 mg"
+    },
+    "oligoelements": {
+      "zinc": "0.3 mg",
+      "silicium": "0.0 mg",
+      "fer": "0.3 mg",
+      "selenium": "0.0 µg"
+    }
+  }
+}

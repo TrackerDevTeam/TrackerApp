@@ -16,12 +16,12 @@ app.use(cors()); // Autoriser les requêtes du frontend
 app.use(express.json()); // Parse le JSON dans les requêtes
 
 app.get("/search", async (req, res) => {
-  const { query, weight } = req.query; // Récupérer le paramètre query de la requête
+  const { query, quantity } = req.query; // Récupérer le paramètre query de la requête
   if (!query) return res.status(400).json({ error: "Veuillez entrer un aliment." });
-  if (!weight) return res.status(400).json({ error: "Veuillez entrer un grammage." });
+  if (!quantity) return res.status(400).json({ error: "Veuillez entrer un grammage." });
 
   try {
-    console.log(`🔍 Requête envoyée à ChatGPT : ${query} (${weight}g)`);
+    console.log(`🔍 Requête envoyée à ChatGPT : ${query} (${quantity})`);
 
     // Faire une requête à l'API OpenAI avec axios
     const response = await axios.post(
@@ -35,20 +35,22 @@ app.get("/search", async (req, res) => {
           },
           {
             role: "user",
-            content: `Donne-moi les informations nutritionnelles détaillées pour ${weight}g de ${query}. Format de réponse attendu : {
+            content: `Donne-moi les informations nutritionnelles détaillées pour ${quantity} de ${query}. Format de réponse attendu : {
+              "product_name": ${query},
+              "quantity": ${quantity},
               "nutrition": {
                 "calories": X,
                 "proteines": X,
                 "glucides": X,
-                "dont sucres": X,
-                "acides gras saturés": X,
-                "acides gras insaturés": {
-                  "polyinsaturés": {
-                    "omega 3": X,
-                    "omega 6": X
+                "dont_sucres": X,
+                "acides_gras_satures": X,
+                "acides_gras_insatures": {
+                  "polyinsatures": {
+                    "omega3": X,
+                    "omega6": X
                   },
-                  "monoinsaturés": {
-                    "omega 9": X
+                  "monoinsatures": {
+                    "omega9": X
                   }
                 },
                 "fibres": X,
@@ -69,13 +71,13 @@ app.get("/search", async (req, res) => {
                   "E": X,
                   "K": X
                 },
-                "minéraux": {
+                "mineraux": {
                   "calcium": X,
                   "sodium": X,
                   "magnesium": X,
                   "potassium": X
                 },
-                "oligoéléments": {
+                "oligoelements": {
                   "zinc": X,
                   "silicium": X,
                   "fer": X,
@@ -105,14 +107,14 @@ app.get("/search", async (req, res) => {
     }
 
     // Sauvegarder la réponse dans un fichier texte
-    const fileName = `./response_nutrition_api/${query}_${weight}g.txt`; // Utilise un timestamp pour un nom unique
-    const dataToSave = `Requête : ${query} (${weight}g)\n\nRéponse ChatGPT :\n${result}\n`;
+    const fileName = `./response_nutrition_api/${query}_100g.txt`; // Utilise un timestamp pour un nom unique
+    const dataToSave = `${result}`;
     // Écrire dans le fichier
     fs.writeFileSync(fileName, dataToSave, 'utf8');
     console.log(`✅ Réponse enregistrée dans le fichier ${fileName}`);
 
     // Retourner la réponse au frontend
-    res.json({ query, weight, result });
+    res.json({ query, quantity, result });
   } catch (error) {
     // Gérer les erreurs plus précisément
     console.error("❌ Erreur API OpenAI :", error.response ? error.response.data : error.message);
