@@ -1,0 +1,52 @@
+{
+  "product_name": "epinards",
+  "quantity": "100g",
+  "type": "dinner",
+  "time": "21:00",
+  "nutrition": {
+    "calories": 23,
+    "proteines": 2.9,
+    "glucides": 3.6,
+    "dont_sucres": 0.4,
+    "acides_gras_satures": 0.1,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.1
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 2.2,
+    "vitamines": {
+      "A": 469,
+      "B": {
+        "B1": 0.08,
+        "B2": 0.19,
+        "B3": 0.2,
+        "B5": 0.1,
+        "B6": 0.2,
+        "B8": 0.1,
+        "B9": 194,
+        "B12": 0
+      },
+      "C": 28.1,
+      "D": 0,
+      "E": 2.0,
+      "K": 482.9
+    },
+    "mineraux": {
+      "calcium": 99,
+      "sodium": 79,
+      "magnesium": 79,
+      "potassium": 558
+    },
+    "oligoelements": {
+      "zinc": 0.53,
+      "silicium": 0.1,
+      "fer": 2.7,
+      "selenium": 1.0
+    }
+  }
+}

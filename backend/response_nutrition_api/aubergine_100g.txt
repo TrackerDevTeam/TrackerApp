@@ -1,0 +1,52 @@
+{
+  "product_name": "aubergine",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "05:00",
+  "nutrition": {
+    "calories": 25,
+    "proteines": 1,
+    "glucides": 6,
+    "dont_sucres": 3,
+    "acides_gras_satures": 0.1,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.1
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 3,
+    "vitamines": {
+      "A": 23,
+      "B": {
+        "B1": 0.03,
+        "B2": 0.04,
+        "B3": 0.1,
+        "B5": 0.2,
+        "B6": 0.1,
+        "B8": 0.01,
+        "B9": 22,
+        "B12": 0
+      },
+      "C": 2.2,
+      "D": 0,
+      "E": 0.3,
+      "K": 3.5
+    },
+    "mineraux": {
+      "calcium": 18,
+      "sodium": 3,
+      "magnesium": 14,
+      "potassium": 229
+    },
+    "oligoelements": {
+      "zinc": 0.2,
+      "silicium": 0,
+      "fer": 0.2,
+      "selenium": 0
+    }
+  }
+}

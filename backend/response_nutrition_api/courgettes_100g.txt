@@ -1,0 +1,52 @@
+{
+  "product_name": "courgettes",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 17,
+    "proteines": 1.2,
+    "glucides": 3.1,
+    "dont_sucres": 2.0,
+    "acides_gras_satures": 0.2,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.1
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 1.0,
+    "vitamines": {
+      "A": 83,
+      "B": {
+        "B1": 0.05,
+        "B2": 0.1,
+        "B3": 0.3,
+        "B5": 0.2,
+        "B6": 0.1,
+        "B8": 0.2,
+        "B9": 24,
+        "B12": 0
+      },
+      "C": 17,
+      "D": 0,
+      "E": 0.1,
+      "K": 1.2
+    },
+    "mineraux": {
+      "calcium": 18,
+      "sodium": 3,
+      "magnesium": 18,
+      "potassium": 261
+    },
+    "oligoelements": {
+      "zinc": 0.2,
+      "silicium": 0.1,
+      "fer": 0.4,
+      "selenium": 0.2
+    }
+  }
+}

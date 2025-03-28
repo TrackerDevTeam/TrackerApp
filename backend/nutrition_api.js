@@ -16,12 +16,15 @@ app.use(cors()); // Autoriser les requêtes du frontend
 app.use(express.json()); // Parse le JSON dans les requêtes
 
 app.get("/search", async (req, res) => {
-  const { query, quantity } = req.query; // Récupérer le paramètre query de la requête
+  const { query, quantity, time, mealType } = req.query; // Récupérer le paramètre query de la requête
   if (!query) return res.status(400).json({ error: "Veuillez entrer un aliment." });
   if (!quantity) return res.status(400).json({ error: "Veuillez entrer un grammage." });
+  if (!time) return res.status(400).json({ error: "Veuillez entrer une heure." });
+  if (!mealType) return res.status(400).json({ error: "Veuillez entrer un type de repas." });
 
   try {
-    console.log(`🔍 Requête envoyée à ChatGPT : ${query} (${quantity})`);
+    console.log(`Requête envoyée à ChatGPT : ${query} (${quantity})`);
+    console.log(`Autres infos requête : ${time} (${mealType})`);
 
     // Faire une requête à l'API OpenAI avec axios
     const response = await axios.post(
@@ -38,6 +41,8 @@ app.get("/search", async (req, res) => {
             content: `Donne-moi les informations nutritionnelles détaillées pour ${quantity} de ${query}. Format de réponse attendu : {
               "product_name": ${query},
               "quantity": ${quantity},
+              "type": ${mealType},
+              "time": ${time},
               "nutrition": {
                 "calories": X,
                 "proteines": X,
@@ -105,7 +110,6 @@ app.get("/search", async (req, res) => {
     if (!fs.existsSync('./response_nutrition_api')) {
       fs.mkdirSync('./response_nutrition_api');
     }
-
     // Sauvegarder la réponse dans un fichier texte
     const fileName = `./response_nutrition_api/${query}_100g.txt`; // Utilise un timestamp pour un nom unique
     const dataToSave = `${result}`;

@@ -1,0 +1,52 @@
+{
+  "product_name": "merguez",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "06:30",
+  "nutrition": {
+    "calories": 300,
+    "proteines": 20,
+    "glucides": 1,
+    "dont_sucres": 0,
+    "acides_gras_satures": 8,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.5
+      },
+      "monoinsatures": {
+        "omega9": 3.5
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 50,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.2,
+        "B3": 5,
+        "B5": 0.5,
+        "B6": 0.3,
+        "B8": 0.1,
+        "B9": 10,
+        "B12": 2
+      },
+      "C": 0,
+      "D": 0,
+      "E": 0.5,
+      "K": 0
+    },
+    "mineraux": {
+      "calcium": 10,
+      "sodium": 800,
+      "magnesium": 20,
+      "potassium": 250
+    },
+    "oligoelements": {
+      "zinc": 3,
+      "silicium": 0.1,
+      "fer": 2,
+      "selenium": 10
+    }
+  }
+}

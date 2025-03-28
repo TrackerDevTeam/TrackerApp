@@ -1,0 +1,52 @@
+{
+  "product_name": "quinoa",
+  "quantity": "100g",
+  "type": "lunch",
+  "time": "12:30",
+  "nutrition": {
+    "calories": 368,
+    "proteines": 14,
+    "glucides": 64,
+    "dont_sucres": 0.9,
+    "acides_gras_satures": 1.9,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 5.0
+      },
+      "monoinsatures": {
+        "omega9": 0.5
+      }
+    },
+    "fibres": 7,
+    "vitamines": {
+      "A": 0,
+      "B": {
+        "B1": 0.36,
+        "B2": 0.32,
+        "B3": 1.52,
+        "B5": 0.76,
+        "B6": 0.1,
+        "B8": 0,
+        "B9": 0.5,
+        "B12": 0
+      },
+      "C": 0,
+      "D": 0,
+      "E": 2.4,
+      "K": 0
+    },
+    "mineraux": {
+      "calcium": 47,
+      "sodium": 5,
+      "magnesium": 64,
+      "potassium": 563
+    },
+    "oligoelements": {
+      "zinc": 3.1,
+      "silicium": 0,
+      "fer": 2.8,
+      "selenium": 0.2
+    }
+  }
+}

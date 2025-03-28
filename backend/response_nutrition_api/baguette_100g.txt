@@ -1,0 +1,52 @@
+{
+  "product_name": "baguette",
+  "quantity": "100g",
+  "type": "lunch",
+  "time": "12:30",
+  "nutrition": {
+    "calories": 270,
+    "proteines": 9,
+    "glucides": 56,
+    "dont_sucres": 0.9,
+    "acides_gras_satures": 0.9,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.2
+      },
+      "monoinsatures": {
+        "omega9": 0.5
+      }
+    },
+    "fibres": 2.7,
+    "vitamines": {
+      "A": 0,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.1,
+        "B3": 1.2,
+        "B5": 0.3,
+        "B6": 0.1,
+        "B8": 0,
+        "B9": 30,
+        "B12": 0
+      },
+      "C": 0,
+      "D": 0,
+      "E": 0.1,
+      "K": 0
+    },
+    "mineraux": {
+      "calcium": 18,
+      "sodium": 491,
+      "magnesium": 22,
+      "potassium": 115
+    },
+    "oligoelements": {
+      "zinc": 0.5,
+      "silicium": 0,
+      "fer": 0.7,
+      "selenium": 0
+    }
+  }
+}
