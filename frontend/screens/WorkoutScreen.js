@@ -13,6 +13,9 @@ import {Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/common/Header';
 import styles from './styles/WorkoutScreen.styles';
+import { savePerformance, getPerformances } from '../../performanceService'; // Remonte d'un niveau vers performanceService.js
+import { db } from '../../firebaseConfig'; // Remonte d'un niveau vers firebaseConfig.js
+import { addDoc, collection } from 'firebase/firestore';  // Importer ces fonctions
 
 const WorkoutScreen = () => {
     // États pour gérer les données et l'interface
@@ -35,7 +38,7 @@ const WorkoutScreen = () => {
         weight: '',
         sets: '',
         reps: '',
-        notes: ''
+        rest_time: ''
     });
 
     // Chargement des données au démarrage
@@ -132,10 +135,10 @@ const WorkoutScreen = () => {
             const newPerformance = {
                 id: Date.now().toString(),
                 exerciseId: selectedExercise.id,
-                weight: parseFloat(performanceData.weight),
+                weight: parseInt(performanceData.weight, 10),
                 sets: parseInt(performanceData.sets, 10),
                 reps: parseInt(performanceData.reps, 10),
-                notes: performanceData.notes,
+                rest_time: parseInt(performanceData.rest_time, 10),
                 date: date
             };
 
@@ -154,9 +157,41 @@ const WorkoutScreen = () => {
             await AsyncStorage.setItem('exercise_history', JSON.stringify(updatedHistory));
             setExerciseHistory(updatedHistory);
             setPerformanceModalVisible(false);
-            setPerformanceData({weight: '', sets: '', reps: '', notes: ''});
+            setPerformanceData({weight: '', sets: '', reps: '', rest_time: ''});
         } catch (error) {
             console.error('Erreur lors de la sauvegarde de la performance:', error);
+        }
+    };
+
+    const saveDetailedPerformance = async () => {
+        if (!selectedExercise) return;
+
+        try {
+            const date = new Date().toISOString();
+            const weight = parseInt(performanceData.weight, 10);
+            const sets = parseInt(performanceData.sets, 10);
+            const reps = parseInt(performanceData.reps, 10);
+            const rest_time = parseInt(performanceData.rest_time, 10);
+
+            const tonnage = weight * sets * reps;
+
+            const detailedPerformance = {
+                exercice: selectedExercise.name,
+                poids: weight,
+                reps: reps,
+                sets: sets,
+                temps_repos: rest_time,
+                tonnage: tonnage,
+                heure: date
+            };
+
+            // Envoi des données dans Firebase Firestore
+            await addDoc(collection(db, "performances"), detailedPerformance);
+
+            console.log('Données détaillées sauvegardées dans Firestore');
+
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde des données détaillées:', error);
         }
     };
 
@@ -338,7 +373,7 @@ const WorkoutScreen = () => {
                                                 <Text style={styles.exerciseName}>{item.name}</Text>
                                                 {lastPerformance && (
                                                     <Text style={styles.lastPerformance}>
-                                                        {`Dernière perf: ${lastPerformance.weight}kg × ${lastPerformance.sets} × ${lastPerformance.reps}`}
+                                                        {`Dernière perf: ${lastPerformance.weight}kg × ${lastPerformance.sets} × ${lastPerformance.reps}× ${lastPerformance.rest_time}s`}
                                                     </Text>
                                                 )}
                                             </TouchableOpacity>
@@ -485,14 +520,13 @@ const WorkoutScreen = () => {
                             onChangeText={(text) => setPerformanceData({...performanceData, reps: text})}
                         />
 
-                        <Text style={styles.inputLabel}>Notes (optionnel)</Text>
+                        <Text style={styles.inputLabel}>Repos (s)</Text>
                         <TextInput
-                            style={[styles.input, styles.textArea]}
-                            placeholder="Ex: Augmenter le poids la prochaine fois"
-                            multiline={true}
-                            numberOfLines={3}
-                            value={performanceData.notes}
-                            onChangeText={(text) => setPerformanceData({...performanceData, notes: text})}
+                            style={styles.input}
+                            placeholder="Ex: 120"
+                            keyboardType="numeric"
+                            value={performanceData.rest_time}
+                            onChangeText={(text) => setPerformanceData({...performanceData, rest_time: text})}
                         />
 
                         <View style={styles.modalButtons}>
@@ -500,7 +534,7 @@ const WorkoutScreen = () => {
                                 style={[styles.modalButton, styles.cancelButton]}
                                 onPress={() => {
                                     setPerformanceModalVisible(false);
-                                    setPerformanceData({weight: '', sets: '', reps: '', notes: ''});
+                                    setPerformanceData({weight: '', sets: '', reps: '', rest_time: ''});
                                 }}>
                                 <Text style={styles.cancelButtonText}>Annuler</Text>
                             </TouchableOpacity>
@@ -509,6 +543,7 @@ const WorkoutScreen = () => {
                                 onPress={() => {
                                     if (performanceData.weight && performanceData.sets && performanceData.reps) {
                                         savePerformance();
+                                        saveDetailedPerformance();
                                     } else {
                                         Alert.alert("Entrée incomplète", "Veuillez remplir les champs de poids, séries et répétitions.");
                                     }
@@ -572,13 +607,11 @@ const WorkoutScreen = () => {
                                                 <Text style={styles.historyDetailLabel}>Répétitions</Text>
                                                 <Text style={styles.historyDetailValue}>{item.reps}</Text>
                                             </View>
-                                        </View>
-                                        {item.notes && (
-                                            <View style={styles.historyNotes}>
-                                                <Text style={styles.historyNotesLabel}>Notes:</Text>
-                                                <Text style={styles.historyNotesText}>{item.notes}</Text>
+                                            <View style={styles.historyDetail}>
+                                                <Text style={styles.historyDetailLabel}>Repos</Text>
+                                                <Text style={styles.historyDetailValue}>{item.rest_time} s</Text>
                                             </View>
-                                        )}
+                                    </View>
                                     </View>
                                 )}
                                 showsVerticalScrollIndicator={false}

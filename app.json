@@ -19,10 +19,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.billygrosexpo.snack20a79877cca84cd784881bdcbbf75519"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d76d9f02-8ced-40d7-a939-9910bdbcbb03"
+      }
+    },
+    "owner": "billygrosexpo"
   }
 }
