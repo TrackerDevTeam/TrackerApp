@@ -53,7 +53,7 @@ const NutritionScreen = () => {
           ...prevMeals,
           [type]: [...prevMeals[type], data],
         }));
-  
+        
         // Mettre à jour allMeals
         setAllMeals((prevAllMeals) => 
           prevAllMeals.map((meal) => 
@@ -227,61 +227,12 @@ const NutritionScreen = () => {
     );
   };
 
-  const calculateDailyTotals = (allMeals) => {
-    return allMeals.reduce((totals, meal) => {
-      meal.items.forEach(item => {
-        const nutrition = item.nutrition;
-  
-        totals.calories += parseFloat(nutrition?.calories) || 0;
-        totals.proteines += parseFloat(nutrition?.proteines) || 0;
-        totals.glucides += parseFloat(nutrition?.glucides) || 0;
-        totals.dont_sucres += parseFloat(nutrition?.dont_sucres) || 0;
-        totals.acides_gras_satures += parseFloat(nutrition?.acides_gras_satures) || 0;
-        totals.omega3 += parseFloat(nutrition?.acides_gras_insatures?.polyinsatures?.omega3) || 0;
-        totals.omega6 += parseFloat(nutrition?.acides_gras_insatures?.polyinsatures?.omega6) || 0;
-        totals.omega9 += parseFloat(nutrition?.acides_gras_insatures?.monoinsatures?.omega9) || 0;
-        totals.fibres += parseFloat(nutrition?.fibres) || 0;
-        totals.vitamineA += parseFloat(nutrition?.vitamines?.A) || 0;
-        totals.vitamineB1 += parseFloat(nutrition?.vitamines?.B?.B1) || 0;
-        totals.vitamineB2 += parseFloat(nutrition?.vitamines?.B?.B2) || 0;
-        totals.vitamineB3 += parseFloat(nutrition?.vitamines?.B?.B3) || 0;
-        totals.vitamineB5 += parseFloat(nutrition?.vitamines?.B?.B5) || 0;
-        totals.vitamineB6 += parseFloat(nutrition?.vitamines?.B?.B6) || 0;
-        totals.vitamineB8 += parseFloat(nutrition?.vitamines?.B?.B8) || 0;
-        totals.vitamineB9 += parseFloat(nutrition?.vitamines?.B?.B9) || 0;
-        totals.vitamineB12 += parseFloat(nutrition?.vitamines?.B?.B12) || 0;
-        totals.vitamineC += parseFloat(nutrition?.vitamines?.C) || 0;
-        totals.vitamineD += parseFloat(nutrition?.vitamines?.D) || 0;
-        totals.vitamineE += parseFloat(nutrition?.vitamines?.E) || 0;
-        totals.vitamineK += parseFloat(nutrition?.vitamines?.K) || 0;
-        totals.calcium += parseFloat(nutrition?.mineraux?.calcium) || 0;
-        totals.sodium += parseFloat(nutrition?.mineraux?.sodium) || 0;
-        totals.magnesium += parseFloat(nutrition?.mineraux?.magnesium) || 0;
-        totals.potassium += parseFloat(nutrition?.mineraux?.potassium) || 0;
-        totals.zinc += parseFloat(nutrition?.oligoelements?.zinc) || 0;
-        totals.silicium += parseFloat(nutrition?.oligoelements?.silicium) || 0;
-        totals.fer += parseFloat(nutrition?.oligoelements?.fer) || 0;
-        totals.selenium += parseFloat(nutrition?.oligoelements?.selenium) || 0;
-      });
-      return totals;
-    }, {
-      calories: 0, proteines: 0, glucides: 0, dont_sucres: 0, acides_gras_satures: 0,
-      omega3: 0, omega6: 0, omega9: 0, fibres: 0, vitamineA: 0, vitamineB1: 0,
-      vitamineB2: 0, vitamineB3: 0, vitamineB5: 0, vitamineB6: 0, vitamineB8: 0,
-      vitamineB9: 0, vitamineB12: 0, vitamineC: 0, vitamineD: 0, vitamineE: 0,
-      vitamineK: 0, calcium: 0, sodium: 0, magnesium: 0, potassium: 0, zinc: 0,
-      silicium: 0, fer: 0, selenium: 0
-    });
-  };
-  
-
-  const PrintDailyTotals = ({ allMeals }) => {
-    const totals = calculateDailyTotals(allMeals);
-    console.log("Totals:", totals);
+  const PrintDailyTotals = ({ mealItems }) => {
+    const totals = calculateMealTotals(mealItems);
   
     return (
       <View style={styles.totalsContainer}>
-        <Text style={styles.totalsTitle}>Total de la Journée:</Text>
+        <Text style={styles.totalsTitle}>Total Journalier :</Text>
         <View style={styles.totalsContent}>
           <Text style={styles.totalItem}>Calories: {totals.calories.toFixed(1)} kcal</Text>
           <Text style={styles.totalItem}>Protéines: {totals.proteines.toFixed(1)} g</Text>
@@ -311,11 +262,13 @@ const NutritionScreen = () => {
           <Text style={styles.totalItem}>Potassium: {totals.potassium.toFixed(1)} mg</Text>
           <Text style={styles.totalItem}>Zinc: {totals.zinc.toFixed(1)} mg</Text>
           <Text style={styles.totalItem}>Silicium: {totals.silicium.toFixed(1)} mg</Text>
-          <Text style={styles.totalItem}>Fer: {totals.fer.toFixed(1)} mg</Text> 
+          <Text style={styles.totalItem}>Fer: {totals.fer.toFixed(1)} mg</Text>
+          <Text style={styles.totalItem}>Sélénium: {totals.selenium.toFixed(1)} mg</Text>
         </View>
       </View>
     );
   };
+  
   
   
 
@@ -392,7 +345,7 @@ const NutritionScreen = () => {
           {renderMealSection("Déjeuner", "lunch")}
           {renderMealSection("Collation", "snack")}
           {renderMealSection("Dîner", "dinner")}
-          <PrintDailyTotals allMeals={allMeals} />
+          <PrintDailyTotals mealItems={allMeals} />  
     
           {error ? <Text style={styles.error}>{error}</Text> : null}
         </ScrollView>

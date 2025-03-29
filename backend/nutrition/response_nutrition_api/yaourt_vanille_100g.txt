@@ -1,0 +1,52 @@
+{
+  "product_name": "yaourt_vanille",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "08:00",
+  "nutrition": {
+    "calories": 95,
+    "proteines": 3.5,
+    "glucides": 12.5,
+    "dont_sucres": 10,
+    "acides_gras_satures": 1.5,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.5
+      },
+      "monoinsatures": {
+        "omega9": 0.3
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 50,
+      "B": {
+        "B1": 0.05,
+        "B2": 0.15,
+        "B3": 0.1,
+        "B5": 0.5,
+        "B6": 0.05,
+        "B8": 0.1,
+        "B9": 5,
+        "B12": 0.4
+      },
+      "C": 1,
+      "D": 0,
+      "E": 0.1,
+      "K": 0
+    },
+    "mineraux": {
+      "calcium": 120,
+      "sodium": 50,
+      "magnesium": 10,
+      "potassium": 150
+    },
+    "oligoelements": {
+      "zinc": 0.4,
+      "silicium": 0,
+      "fer": 0.1,
+      "selenium": 0
+    }
+  }
+}

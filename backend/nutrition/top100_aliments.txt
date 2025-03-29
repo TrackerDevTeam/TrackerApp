@@ -1,0 +1,199 @@
+1.	Pain
+
+2.	Pâtes
+
+3.	Riz
+
+4.	Pommes de terre
+
+5.	Fromage
+
+6.	Lait
+
+7.	Beurre
+
+8.	Yaourt
+
+9.	Poulet
+
+10.	Jambon
+
+11.	Steak haché
+
+12.	Œufs
+
+13.	Saumon
+
+14.	Thon
+
+15.	Crevettes
+
+16.	Légumes verts (haricots, épinards, courgettes)
+
+17.	Carottes
+
+18.	Tomates
+
+19.	Oignons
+
+20.	Ail
+
+21.	Poivrons
+
+22.	Champignons
+
+23.	Salade verte
+
+24.	Chou-fleur
+
+25.	Brocolis
+
+26.	Lentilles
+
+27.	Pois chiches
+
+28.	Haricots rouges
+
+29.	Pommes
+
+30.	Bananes
+
+31.	Oranges
+
+32.	Pêches
+
+33.	Raisins
+
+34.	Fraises
+
+35.	Cerises
+
+36.	Kiwis
+
+37.	Noix
+
+38.	Amandes
+
+39.	Chocolat
+
+40.	Sucre
+
+41.	Miel
+
+42.	Confiture
+
+43.	Café
+
+44.	Thé
+
+45.	Vin
+
+46.	Bière
+
+47.	Eau minérale
+
+48.	Jus d’orange
+
+49.	Soda
+
+50.	Farine
+
+51.	Baguette tradition
+
+52.	Croissants
+
+53.	Pain de mie
+
+54.	Crème fraîche
+
+55.	Lardons
+
+56.	Saucisson
+
+57.	Pâté
+
+58.	Foie gras
+
+59.	Huile d’olive
+
+60.	Huile de tournesol
+
+61.	Moutarde
+
+62.	Ketchup
+
+63.	Mayonnaise
+
+64.	Vinaigre balsamique
+
+65.	Cornichons
+
+66.	Sel
+
+67.	Poivre
+
+68.	Herbes de Provence
+
+69.	Basilic
+
+70.	Persil
+
+71.	Romarin
+
+72.	Thym
+
+73.	Bouillon cube
+
+74.	Laitue
+
+75.	Épinards
+
+76.	Courgettes
+
+77.	Aubergines
+
+78.	Radis
+
+79.	Poireaux
+
+80.	Céleri
+
+81.	Navets
+
+82.	Poires
+
+83.	Melon
+
+84.	Pastèque
+
+85.	Figues
+
+86.	Mirabelles
+
+87.	Châtaignes
+
+88.	Marrons
+
+89.	Pain au chocolat
+
+90.	Brioche
+
+91.	Biscuits
+
+92.	Céréales petit-déjeuner
+
+93.	Yaourt aux fruits
+
+94.	Tofu
+
+95.	Saucisses
+
+96.	Nuggets de poulet
+
+97.	Lasagnes
+
+98.	Pizza
+
+99.	Quiche
+
+100. Ratatouille

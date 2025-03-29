@@ -1,0 +1,52 @@
+{
+  "product_name": "asperges",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "08:00",
+  "nutrition": {
+    "calories": 20,
+    "proteines": 2.2,
+    "glucides": 3.7,
+    "dont_sucres": 1.5,
+    "acides_gras_satures": 0.1,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.2
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 2.1,
+    "vitamines": {
+      "A": 756,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.2,
+        "B3": 0.6,
+        "B5": 0.3,
+        "B6": 0.1,
+        "B8": 0.1,
+        "B9": 52,
+        "B12": 0
+      },
+      "C": 5.6,
+      "D": 0,
+      "E": 1.1,
+      "K": 41.6
+    },
+    "mineraux": {
+      "calcium": 24,
+      "sodium": 2,
+      "magnesium": 14,
+      "potassium": 202
+    },
+    "oligoelements": {
+      "zinc": 0.5,
+      "silicium": 0.1,
+      "fer": 1.1,
+      "selenium": 2.5
+    }
+  }
+}
