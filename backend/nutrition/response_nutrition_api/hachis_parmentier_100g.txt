@@ -1,0 +1,52 @@
+{
+  "product_name": "hachis_parmentier",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 150,
+    "proteines": 7,
+    "glucides": 15,
+    "dont_sucres": 2,
+    "acides_gras_satures": 4,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.5
+      },
+      "monoinsatures": {
+        "omega9": 1.5
+      }
+    },
+    "fibres": 2,
+    "vitamines": {
+      "A": 50,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.2,
+        "B3": 1.5,
+        "B5": 0.5,
+        "B6": 0.1,
+        "B8": 5,
+        "B9": 20,
+        "B12": 0.5
+      },
+      "C": 5,
+      "D": 0,
+      "E": 1,
+      "K": 2
+    },
+    "mineraux": {
+      "calcium": 30,
+      "sodium": 300,
+      "magnesium": 20,
+      "potassium": 250
+    },
+    "oligoelements": {
+      "zinc": 1,
+      "silicium": 0.1,
+      "fer": 1.5,
+      "selenium": 5
+    }
+  }
+}

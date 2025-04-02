@@ -1,0 +1,52 @@
+{
+  "product_name": "myrtilles",
+  "quantity": "100g",
+  "type": "snack",
+  "time": "16:00",
+  "nutrition": {
+    "calories": 57,
+    "proteines": 0.7,
+    "glucides": 14.5,
+    "dont_sucres": 10,
+    "acides_gras_satures": 0.3,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.2
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 2.4,
+    "vitamines": {
+      "A": 54,
+      "B": {
+        "B1": 0.02,
+        "B2": 0.04,
+        "B3": 0.6,
+        "B5": 0.1,
+        "B6": 0.1,
+        "B8": 0.02,
+        "B9": 6,
+        "B12": 0
+      },
+      "C": 9.7,
+      "D": 0,
+      "E": 0.6,
+      "K": 19.3
+    },
+    "mineraux": {
+      "calcium": 6,
+      "sodium": 1,
+      "magnesium": 6,
+      "potassium": 77
+    },
+    "oligoelements": {
+      "zinc": 0.2,
+      "silicium": 0,
+      "fer": 0.2,
+      "selenium": 0
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "product_name": "oeufs",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 155,
+    "proteines": 13,
+    "glucides": 1.1,
+    "dont_sucres": 1.1,
+    "acides_gras_satures": 3.1,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.4
+      },
+      "monoinsatures": {
+        "omega9": 1.9
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 270,
+      "B": {
+        "B1": 0.04,
+        "B2": 0.51,
+        "B3": 0.07,
+        "B5": 1.0,
+        "B6": 0.1,
+        "B8": 25,
+        "B9": 47,
+        "B12": 0.89
+      },
+      "C": 0,
+      "D": 1.1,
+      "E": 1.0,
+      "K": 0.3
+    },
+    "mineraux": {
+      "calcium": 50,
+      "sodium": 70,
+      "magnesium": 10,
+      "potassium": 126
+    },
+    "oligoelements": {
+      "zinc": 1.0,
+      "silicium": 0.0,
+      "fer": 1.2,
+      "selenium": 30
+    }
+  }
+}
