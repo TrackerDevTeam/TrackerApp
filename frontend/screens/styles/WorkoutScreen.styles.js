@@ -216,6 +216,9 @@ export default StyleSheet.create({
     cancelButtonText: {
         color: '#333',
     },
+    editButton: {
+        marginLeft: 10,
+    },
 
     // Historique des performances
     historyItem: {
@@ -266,4 +269,5 @@ export default StyleSheet.create({
     historyNotesText: {
         fontSize: 14,
     }
+
 });

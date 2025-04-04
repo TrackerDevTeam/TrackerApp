@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
@@ -6,40 +6,34 @@ import {
     FlatList,
     Modal,
     TextInput,
-    Alert,
-    ScrollView
+    Alert
 } from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../components/common/Header';
 import styles from './styles/WorkoutScreen.styles';
-import { savePerformance, getPerformances } from '../../performanceService'; // Remonte d'un niveau vers performanceService.js
-import { db } from '../../firebaseConfig'; // Remonte d'un niveau vers firebaseConfig.js
-import { addDoc, collection } from 'firebase/firestore';  // Importer ces fonctions
+import { db } from '../../firebaseConfig'; // Assurez-vous que le chemin est correct
+import { doc, setDoc } from "firebase/firestore";
+import { UserContext } from '../../UserContext';
+
+const LOCAL_TRAINING_KEY = 'localTrainingData';
 
 const WorkoutScreen = () => {
-    // États pour gérer les données et l'interface
-    const [sessions, setSessions] = useState([]);
-    const [currentSession, setCurrentSession] = useState(null);
-    const [exercises, setExercises] = useState([]);
-    const [selectedExercise, setSelectedExercise] = useState(null);
-    const [exerciseHistory, setExerciseHistory] = useState({});
-
-    // États pour les modales
+    const { userId, date } = useContext(UserContext);
     const [sessionModalVisible, setSessionModalVisible] = useState(false);
     const [exerciseModalVisible, setExerciseModalVisible] = useState(false);
     const [performanceModalVisible, setPerformanceModalVisible] = useState(false);
     const [historyModalVisible, setHistoryModalVisible] = useState(false);
-
-    // États pour les inputs
     const [newSessionName, setNewSessionName] = useState('');
     const [newExerciseName, setNewExerciseName] = useState('');
-    const [performanceData, setPerformanceData] = useState({
-        weight: '',
-        sets: '',
-        reps: '',
-        rest_time: ''
-    });
+    const [performanceData, setPerformanceData] = useState({ weight: '', sets: '', reps: '', rest_time: '' });
+    const [sessions, setSessions] = useState([]);
+    const [exercises, setExercises] = useState([]);
+    const [currentSession, setCurrentSession] = useState(null);
+    const [selectedExercise, setSelectedExercise] = useState(null);
+    const [exerciseHistory, setExerciseHistory] = useState({});
+    const [isTrainingDocumentCreated, setIsTrainingDocumentCreated] = useState(false);
+    const [editingPerformance, setEditingPerformance] = useState(null);
 
     // Chargement des données au démarrage
     useEffect(() => {
@@ -61,6 +55,9 @@ const WorkoutScreen = () => {
             if (storedSessions) {
                 setSessions(JSON.parse(storedSessions));
             }
+            // Supprimer le dossier training local au démarrage
+            await deleteTrainingDocumentLocally();
+            setIsTrainingDocumentCreated(false); // Le dossier n'existe plus
         } catch (error) {
             console.error('Erreur lors du chargement des séances:', error);
         }
@@ -76,6 +73,36 @@ const WorkoutScreen = () => {
             }
         } catch (error) {
             console.error('Erreur lors du chargement des exercices:', error);
+        }
+    };
+
+    const deletePerformance = async (performanceId) => {
+        if (!selectedExercise) return;
+
+        try {
+            // Mettre à jour l'historique
+            const exerciseKey = selectedExercise.id;
+            let updatedHistory = { ...exerciseHistory };
+
+            if (updatedHistory[exerciseKey]) {
+                updatedHistory[exerciseKey] = updatedHistory[exerciseKey].filter(
+                    (entry) => entry.id !== performanceId
+                );
+                await AsyncStorage.setItem('exercise_history', JSON.stringify(updatedHistory));
+                setExerciseHistory(updatedHistory);
+            }
+
+            // Mettre à jour le dossier training local
+            let localTrainingData = await getTrainingLocally();
+            if (localTrainingData && localTrainingData.exercices) {
+                localTrainingData.exercices = localTrainingData.exercices.filter(
+                    (entry) => entry.id !== performanceId
+                );
+                await saveTrainingLocally(localTrainingData);
+                console.log("Performance supprimée du dossier training local avec succès !");
+            }
+        } catch (error) {
+            console.error('Erreur lors de la suppression de la performance:', error);
         }
     };
 
@@ -131,35 +158,172 @@ const WorkoutScreen = () => {
         if (!selectedExercise) return;
 
         try {
-            const date = new Date().toISOString();
+            const date = editingPerformance ? editingPerformance.date : new Date().toISOString(); // Garder la date originale si édition
             const newPerformance = {
-                id: Date.now().toString(),
+                id: editingPerformance ? editingPerformance.id : Date.now().toString(), // Garder l'ID si édition
                 exerciseId: selectedExercise.id,
                 weight: parseInt(performanceData.weight, 10),
                 sets: parseInt(performanceData.sets, 10),
                 reps: parseInt(performanceData.reps, 10),
                 rest_time: parseInt(performanceData.rest_time, 10),
-                date: date
+                date: date,
             };
 
             const exerciseKey = selectedExercise.id;
-            let updatedHistory = {...exerciseHistory};
+            let updatedHistory = { ...exerciseHistory };
 
             if (!updatedHistory[exerciseKey]) {
                 updatedHistory[exerciseKey] = [];
             }
 
-            updatedHistory[exerciseKey] = [
-                newPerformance,
-                ...updatedHistory[exerciseKey]
-            ];
+            if (editingPerformance) {
+                // Si on édite, remplacer l'entrée existante
+                updatedHistory[exerciseKey] = updatedHistory[exerciseKey].map((entry) =>
+                    entry.id === editingPerformance.id ? newPerformance : entry
+                );
+            } else {
+                // Sinon, ajouter une nouvelle entrée
+                updatedHistory[exerciseKey] = [
+                    newPerformance,
+                    ...updatedHistory[exerciseKey],
+                ];
+            }
 
             await AsyncStorage.setItem('exercise_history', JSON.stringify(updatedHistory));
             setExerciseHistory(updatedHistory);
             setPerformanceModalVisible(false);
-            setPerformanceData({weight: '', sets: '', reps: '', rest_time: ''});
+            setPerformanceData({ weight: '', sets: '', reps: '', rest_time: '' });
+            setEditingPerformance(null); // Réinitialiser l'état d'édition
         } catch (error) {
             console.error('Erreur lors de la sauvegarde de la performance:', error);
+        }
+    };
+
+    const deleteTrainingDocumentLocally = async () => {
+        try {
+            const trainingData = await getTrainingLocally();
+
+            if (trainingData) {
+                await AsyncStorage.removeItem(LOCAL_TRAINING_KEY);
+                // Vérification explicite après suppression
+                const checkData = await getTrainingLocally();
+                if (!checkData) {
+                    console.log("Document training supprimé localement avec succès !");
+                } else {
+                    console.warn("Le document n’a pas été correctement supprimé !");
+                }
+            } else {
+                console.log("Aucun document training trouvé localement à supprimer.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression du document training localement :", error);
+        }
+    };
+
+    const createTrainingDocumentLocally = async () => {
+        try {
+            const trainingData = await getTrainingLocally();
+
+            if (!trainingData) {
+                const defaultTrainingData = {
+                    debut: new Date().toISOString(), // Renseigner l'heure de début
+                    fin: "",
+                    temps_depuis_derniere_seance: "",
+                    duree_minutes: "",
+                    nombre_series_total: "",
+                    nombre_reps_total: "",
+                    tonnage_total: "",
+                    poids_moyen_par_serie: "",
+                    santé_seance: {
+                        frequence_cardiaque: { moyenne: "", max: "", avant: "", après: "" },
+                        saturation_oxygene: { moyenne: "", min: "", max: "" },
+                        temperature_corporelle: { avant: "", moyenne: "", après: "" }
+                    },
+                    exercices: []
+                };
+
+                await saveTrainingLocally(defaultTrainingData);
+                console.log("Document training créé localement avec succès !");
+            } else {
+                console.log("Le document training existe déjà localement.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la création du document training localement:", error);
+        }
+    };
+
+    const handleSessionToggle = async () => {
+        if (isTrainingDocumentCreated) {
+            // Fin de séance : calculer les données, mettre à jour, synchroniser, puis supprimer
+            let localTrainingData = await getTrainingLocally();
+            if (localTrainingData) {
+                // Renseigner l'heure de fin
+                const fin = new Date().toISOString();
+                localTrainingData.fin = fin;
+
+                // Calculer la durée de la séance en minutes
+                const debutDate = new Date(localTrainingData.debut);
+                const finDate = new Date(fin);
+                const dureeMs = finDate - debutDate; // Différence en millisecondes
+                const dureeMinutes = Math.round(dureeMs / (1000 * 60)); // Convertir en minutes
+                localTrainingData.duree_minutes = dureeMinutes.toString();
+
+                // Calculer les totaux à partir des exercices
+                let nombreSeriesTotal = 0;
+                let nombreRepsTotal = 0;
+                let tonnageTotal = 0;
+
+                localTrainingData.exercices.forEach((exercice) => {
+                    const sets = parseInt(exercice.sets, 10);
+                    const reps = parseInt(exercice.reps, 10);
+                    const poids = parseInt(exercice.poids, 10);
+
+                    nombreSeriesTotal += sets;
+                    nombreRepsTotal += sets * reps;
+                    tonnageTotal += exercice.tonnage; // tonnage = poids × sets × reps (déjà calculé)
+                });
+
+                localTrainingData.nombre_series_total = nombreSeriesTotal.toString();
+                localTrainingData.nombre_reps_total = nombreRepsTotal.toString();
+                localTrainingData.tonnage_total = tonnageTotal.toString();
+
+                // Calculer le poids moyen par série
+                const poidsMoyenParSerie = nombreSeriesTotal > 0 ? tonnageTotal / nombreSeriesTotal : 0;
+                localTrainingData.poids_moyen_par_serie = poidsMoyenParSerie.toFixed(2); // Arrondir à 2 décimales
+
+                // Sauvegarder les modifications localement avant synchronisation
+                await saveTrainingLocally(localTrainingData);
+
+                // Synchroniser avec Firebase
+                await syncTrainingWithFirebase();
+
+                // Supprimer le dossier local
+                await deleteTrainingDocumentLocally();
+            }
+            setIsTrainingDocumentCreated(false);
+        } else {
+            // Début de séance : créer le dossier training local
+            await createTrainingDocumentLocally();
+            setIsTrainingDocumentCreated(true);
+        }
+    };
+
+    const saveTrainingLocally = async (trainingData) => {
+        try {
+            await AsyncStorage.setItem(LOCAL_TRAINING_KEY, JSON.stringify(trainingData));
+            console.log("Données d'entraînement sauvegardées localement.");
+        } catch (error) {
+            console.error("Erreur lors de la sauvegarde locale des données d'entraînement:", error);
+        }
+    };
+
+    const getTrainingLocally = async () => {
+        try {
+            const trainingData = await AsyncStorage.getItem(LOCAL_TRAINING_KEY);
+            return trainingData ? JSON.parse(trainingData) : null;
+        } catch (error) {
+            console.error("Erreur lors de la récupération des données d'entraînement locales:", error);
+            return null;
         }
     };
 
@@ -167,31 +331,56 @@ const WorkoutScreen = () => {
         if (!selectedExercise) return;
 
         try {
-            const date = new Date().toISOString();
+            const dateTime = editingPerformance ? editingPerformance.date : new Date().toISOString();
             const weight = parseInt(performanceData.weight, 10);
             const sets = parseInt(performanceData.sets, 10);
             const reps = parseInt(performanceData.reps, 10);
             const rest_time = parseInt(performanceData.rest_time, 10);
-
             const tonnage = weight * sets * reps;
 
-            const detailedPerformance = {
-                exercice: selectedExercise.name,
+            const updatedExercise = {
+                nom: selectedExercise.name,
                 poids: weight,
                 reps: reps,
                 sets: sets,
                 temps_repos: rest_time,
                 tonnage: tonnage,
-                heure: date
+                heure: dateTime,
+                id: editingPerformance ? editingPerformance.id : Date.now().toString(), // Ajouter un ID pour identifier l'entrée
             };
 
-            // Envoi des données dans Firebase Firestore
-            await addDoc(collection(db, "performances"), detailedPerformance);
+            let localTrainingData = await getTrainingLocally() || { exercices: [] };
 
-            console.log('Données détaillées sauvegardées dans Firestore');
+            if (editingPerformance) {
+                // Si on édite, remplacer l'entrée existante
+                localTrainingData.exercices = localTrainingData.exercices.map((entry) =>
+                    entry.id === editingPerformance.id ? updatedExercise : entry
+                );
+            } else {
+                // Sinon, ajouter une nouvelle entrée
+                localTrainingData.exercices.push(updatedExercise);
+            }
 
+            await saveTrainingLocally(localTrainingData);
+            console.log("Exercice mis à jour avec succès localement !");
         } catch (error) {
-            console.error('Erreur lors de la sauvegarde des données détaillées:', error);
+            console.error("Erreur lors de la mise à jour de l'exercice localement:", error);
+        }
+    };
+
+    const syncTrainingWithFirebase = async () => {
+        try {
+            const localTrainingData = await getTrainingLocally();
+
+            if (localTrainingData) {
+                const trainingRef = doc(db, `users/${userId}/${date}`, "training");
+                await setDoc(trainingRef, localTrainingData);
+                console.log("Données d'entraînement synchronisées avec Firebase.");
+            } else {
+                console.log("Aucune donnée locale à synchroniser.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la synchronisation des données d'entraînement:", error);
         }
     };
 
@@ -223,7 +412,7 @@ const WorkoutScreen = () => {
             setExercises(updatedExercises);
 
             // Supprimer l'historique associé
-            const updatedHistory = {...exerciseHistory};
+            const updatedHistory = { ...exerciseHistory };
             delete updatedHistory[exerciseId];
             await AsyncStorage.setItem('exercise_history', JSON.stringify(updatedHistory));
             setExerciseHistory(updatedHistory);
@@ -231,29 +420,6 @@ const WorkoutScreen = () => {
             console.error('Erreur lors de la suppression de l\'exercice:', error);
         }
     };
-
-    const clearHistory = async () => {
-        Alert.alert(
-            "Confirmer la suppression",
-            "Êtes-vous sûr de vouloir supprimer tout l'historique des performances ?",
-            [
-                {text: "Annuler", style: "cancel"},
-                {
-                    text: "Supprimer",
-                    style: "destructive",
-                    onPress: async () => {
-                        try {
-                            await AsyncStorage.removeItem('exercise_history');
-                            setExerciseHistory({});
-                        } catch (error) {
-                            console.error('Erreur lors de la suppression de l\'historique:', error);
-                        }
-                    }
-                }
-            ]
-        );
-    };
-
     const getLastPerformance = (exerciseId) => {
         if (!exerciseHistory[exerciseId] || exerciseHistory[exerciseId].length === 0) {
             return null;
@@ -271,6 +437,14 @@ const WorkoutScreen = () => {
     };
 
     const openExerciseDetail = (exercise) => {
+        if (!isTrainingDocumentCreated) {
+            Alert.alert(
+                "Séance non démarrée",
+                "Veuillez démarrer la séance pour ajouter une performance.",
+                [{ text: "OK", style: "cancel" }]
+            );
+            return;
+        }
         setSelectedExercise(exercise);
         setPerformanceModalVisible(true);
     };
@@ -280,10 +454,14 @@ const WorkoutScreen = () => {
         setHistoryModalVisible(true);
     };
 
-    // Affichage
     return (
         <View style={styles.container}>
-            <Header title={currentSession ? currentSession.name : "Workout"}/>
+            {/* Utilisation du CustomHeader au lieu du Header de base */}
+            <Header
+                title={currentSession ? currentSession.name : 'Workout'}
+                leftAction={createTrainingDocumentLocally} // Action pour le bouton à gauche
+                showLeftButton={true} // Masquer le bouton à droite
+            />
 
             {/* Vue principale */}
             <View style={styles.content}>
@@ -295,7 +473,7 @@ const WorkoutScreen = () => {
                             <TouchableOpacity
                                 style={styles.addButton}
                                 onPress={() => setSessionModalVisible(true)}>
-                                <Ionicons name="add-circle" size={24} color="#4CAF50"/>
+                                <Ionicons name="add-circle" size={24} color="#4CAF50" />
                             </TouchableOpacity>
                         </View>
 
@@ -312,7 +490,7 @@ const WorkoutScreen = () => {
                             <FlatList
                                 data={sessions}
                                 keyExtractor={(item) => item.id}
-                                renderItem={({item}) => (
+                                renderItem={({ item }) => (
                                     <TouchableOpacity
                                         style={styles.sessionItem}
                                         onPress={() => openSession(item)}>
@@ -325,7 +503,7 @@ const WorkoutScreen = () => {
                                         <TouchableOpacity
                                             style={styles.deleteButton}
                                             onPress={() => deleteSession(item.id)}>
-                                            <Ionicons name="trash-outline" size={20} color="#FF5252"/>
+                                            <Ionicons name="trash-outline" size={20} color="#FF5252" />
                                         </TouchableOpacity>
                                     </TouchableOpacity>
                                 )}
@@ -340,13 +518,13 @@ const WorkoutScreen = () => {
                             <TouchableOpacity
                                 style={styles.backButton}
                                 onPress={backToSessions}>
-                                <Ionicons name="arrow-back" size={24} color="#333"/>
+                                <Ionicons name="arrow-back" size={24} color="#333" />
                             </TouchableOpacity>
                             <Text style={styles.sectionTitle}>Exercices</Text>
                             <TouchableOpacity
                                 style={styles.addButton}
                                 onPress={() => setExerciseModalVisible(true)}>
-                                <Ionicons name="add-circle" size={24} color="#4CAF50"/>
+                                <Ionicons name="add-circle" size={24} color="#4CAF50" />
                             </TouchableOpacity>
                         </View>
 
@@ -363,7 +541,7 @@ const WorkoutScreen = () => {
                             <FlatList
                                 data={exercises}
                                 keyExtractor={(item) => item.id}
-                                renderItem={({item}) => {
+                                renderItem={({ item }) => {
                                     const lastPerformance = getLastPerformance(item.id);
                                     return (
                                         <View style={styles.exerciseItem}>
@@ -381,12 +559,12 @@ const WorkoutScreen = () => {
                                                 <TouchableOpacity
                                                     style={styles.historyButton}
                                                     onPress={() => openExerciseHistory(item)}>
-                                                    <Ionicons name="time-outline" size={20} color="#2196F3"/>
+                                                    <Ionicons name="time-outline" size={20} color="#2196F3" />
                                                 </TouchableOpacity>
                                                 <TouchableOpacity
                                                     style={styles.deleteButton}
                                                     onPress={() => deleteExercise(item.id)}>
-                                                    <Ionicons name="trash-outline" size={20} color="#FF5252"/>
+                                                    <Ionicons name="trash-outline" size={20} color="#FF5252" />
                                                 </TouchableOpacity>
                                             </View>
                                         </View>
@@ -398,8 +576,10 @@ const WorkoutScreen = () => {
 
                         <TouchableOpacity
                             style={styles.clearHistoryButton}
-                            onPress={clearHistory}>
-                            <Text style={styles.clearHistoryText}>Vider l'historique</Text>
+                            onPress={handleSessionToggle}>
+                            <Text style={styles.clearHistoryText}>
+                                {isTrainingDocumentCreated ? "Fin de séance" : "Début de séance"}
+                            </Text>
                         </TouchableOpacity>
                     </>
                 )}
@@ -490,7 +670,9 @@ const WorkoutScreen = () => {
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>
-                            {selectedExercise ? selectedExercise.name : "Performance"}
+                            {selectedExercise
+                                ? `${editingPerformance ? "Éditer" : "Ajouter"} - ${selectedExercise.name}`
+                                : "Performance"}
                         </Text>
 
                         <Text style={styles.inputLabel}>Poids (kg)</Text>
@@ -499,7 +681,7 @@ const WorkoutScreen = () => {
                             placeholder="Ex: 60"
                             keyboardType="numeric"
                             value={performanceData.weight}
-                            onChangeText={(text) => setPerformanceData({...performanceData, weight: text})}
+                            onChangeText={(text) => setPerformanceData({ ...performanceData, weight: text })}
                         />
 
                         <Text style={styles.inputLabel}>Séries</Text>
@@ -508,7 +690,7 @@ const WorkoutScreen = () => {
                             placeholder="Ex: 3"
                             keyboardType="numeric"
                             value={performanceData.sets}
-                            onChangeText={(text) => setPerformanceData({...performanceData, sets: text})}
+                            onChangeText={(text) => setPerformanceData({ ...performanceData, sets: text })}
                         />
 
                         <Text style={styles.inputLabel}>Répétitions</Text>
@@ -517,7 +699,7 @@ const WorkoutScreen = () => {
                             placeholder="Ex: 10"
                             keyboardType="numeric"
                             value={performanceData.reps}
-                            onChangeText={(text) => setPerformanceData({...performanceData, reps: text})}
+                            onChangeText={(text) => setPerformanceData({ ...performanceData, reps: text })}
                         />
 
                         <Text style={styles.inputLabel}>Repos (s)</Text>
@@ -526,7 +708,7 @@ const WorkoutScreen = () => {
                             placeholder="Ex: 120"
                             keyboardType="numeric"
                             value={performanceData.rest_time}
-                            onChangeText={(text) => setPerformanceData({...performanceData, rest_time: text})}
+                            onChangeText={(text) => setPerformanceData({ ...performanceData, rest_time: text })}
                         />
 
                         <View style={styles.modalButtons}>
@@ -534,7 +716,7 @@ const WorkoutScreen = () => {
                                 style={[styles.modalButton, styles.cancelButton]}
                                 onPress={() => {
                                     setPerformanceModalVisible(false);
-                                    setPerformanceData({weight: '', sets: '', reps: '', rest_time: ''});
+                                    setPerformanceData({ weight: '', sets: '', reps: '', rest_time: '' });
                                 }}>
                                 <Text style={styles.cancelButtonText}>Annuler</Text>
                             </TouchableOpacity>
@@ -570,7 +752,7 @@ const WorkoutScreen = () => {
                             <TouchableOpacity
                                 style={styles.closeButton}
                                 onPress={() => setHistoryModalVisible(false)}>
-                                <Ionicons name="close" size={24} color="#333"/>
+                                <Ionicons name="close" size={24} color="#333" />
                             </TouchableOpacity>
                         </View>
 
@@ -584,7 +766,7 @@ const WorkoutScreen = () => {
                             <FlatList
                                 data={exerciseHistory[selectedExercise.id]}
                                 keyExtractor={(item) => item.id}
-                                renderItem={({item}) => (
+                                renderItem={({ item }) => (
                                     <View style={styles.historyItem}>
                                         <View style={styles.historyHeader}>
                                             <Text style={styles.historyDate}>
@@ -593,6 +775,41 @@ const WorkoutScreen = () => {
                                                 minute: '2-digit'
                                             })}
                                             </Text>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <TouchableOpacity
+                                                    style={styles.editButton}
+                                                    onPress={() => {
+                                                        setEditingPerformance(item);
+                                                        setPerformanceData({
+                                                            weight: item.weight.toString(),
+                                                            sets: item.sets.toString(),
+                                                            reps: item.reps.toString(),
+                                                            rest_time: item.rest_time.toString(),
+                                                        });
+                                                        setPerformanceModalVisible(true);
+                                                        setHistoryModalVisible(false);
+                                                    }}>
+                                                    <Ionicons name="pencil-outline" size={20} color="#2196F3" />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    style={styles.deleteButton}
+                                                    onPress={() => {
+                                                        Alert.alert(
+                                                            "Confirmer la suppression",
+                                                            "Êtes-vous sûr de vouloir supprimer cette performance ?",
+                                                            [
+                                                                { text: "Annuler", style: "cancel" },
+                                                                {
+                                                                    text: "Supprimer",
+                                                                    style: "destructive",
+                                                                    onPress: () => deletePerformance(item.id),
+                                                                },
+                                                            ]
+                                                        );
+                                                    }}>
+                                                    <Ionicons name="trash-outline" size={20} color="#FF5252" />
+                                                </TouchableOpacity>
+                                            </View>
                                         </View>
                                         <View style={styles.historyDetails}>
                                             <View style={styles.historyDetail}>
@@ -611,7 +828,7 @@ const WorkoutScreen = () => {
                                                 <Text style={styles.historyDetailLabel}>Repos</Text>
                                                 <Text style={styles.historyDetailValue}>{item.rest_time} s</Text>
                                             </View>
-                                    </View>
+                                        </View>
                                     </View>
                                 )}
                                 showsVerticalScrollIndicator={false}
