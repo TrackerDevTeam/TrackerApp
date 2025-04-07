@@ -1,4 +1,4 @@
-// NutritionScreen.css
+// NutritionScreen.styles.js
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
@@ -10,82 +10,16 @@ export default StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  section: {
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-  },
-  addButton: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  mealItem: {
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  },
-  mealItemTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  mealItemDetails: {
-    flexDirection: 'row',
-  },
-  mealImage: {
-    width: 80,
-    height: 80,
-    marginRight: 10,
-  },
-  mealNutrition: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  error: {
-    color: 'red',
-    textAlign: 'center',
-    marginTop: 10,
-  },
-  // Styles pour les totaux
   totalsContainer: {
     backgroundColor: '#e8f5e9',
     borderRadius: 5,
     padding: 10,
-    marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 20,
   },
   totalsTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 10,
   },
   totalsContent: {
     flexDirection: 'row',
@@ -95,5 +29,75 @@ export default StyleSheet.create({
     width: '50%',
     marginBottom: 5,
     fontWeight: '500',
-  }
+  },
+  addMealButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    padding: 10,
+    justifyContent: 'center',
+  },
+  addMealButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4CAF50',
+    marginLeft: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    width: '80%',
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: '#f0f0f0',
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+  },
+  saveButton: {
+    backgroundColor: '#4CAF50',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });

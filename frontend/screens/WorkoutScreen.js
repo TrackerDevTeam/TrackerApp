@@ -234,11 +234,11 @@ const WorkoutScreen = () => {
                     nombre_reps_total: "",
                     tonnage_total: "",
                     poids_moyen_par_serie: "",
-                    santé_seance: {
+/*                    santé_seance: {
                         frequence_cardiaque: { moyenne: "", max: "", avant: "", après: "" },
                         saturation_oxygene: { moyenne: "", min: "", max: "" },
                         temperature_corporelle: { avant: "", moyenne: "", après: "" }
-                    },
+                    },*/
                     exercices: []
                 };
 
