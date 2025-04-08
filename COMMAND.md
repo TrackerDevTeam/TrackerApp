@@ -1,10 +1,6 @@
 # PM2 : Process Manager 2
 ## Start pm2 --> lance tous les composants
 
-```sh
-pm2 start ecosystem.config.js
-```
-
 ## Liste tous les composants
 
 ```sh
