@@ -1,17 +1,19 @@
 // NutritionScreen.js
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, Alert, ScrollView, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from '../../firebaseConfig'; // Assurez-vous que le chemin est correct
+import { db } from '../../firebaseConfig';
 import { UserContext } from '../../UserContext';
 import Header from '../components/common/Header';
 import styles from './styles/NutritionScreen.styles';
 import axios from 'axios';
+import { foodDatabase } from '../../backend/foodDatabase';
 
 const LOCAL_NUTRITION_KEY = 'localNutritionData';
-const API_KEY = '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';
+const API_KEY = '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';
+const LAST_SAVED_DATE_KEY = 'lastSavedNutritionDate';
 
 const NutritionScreen = () => {
   const { userId, date } = useContext(UserContext);
@@ -24,16 +26,73 @@ const NutritionScreen = () => {
     lipide: 0,
     proteine: 0,
   });
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   // Charger les données au démarrage
   useEffect(() => {
     loadNutritionData();
-  }, []);
+  }, [date]); // React to date changes
+
+  // Gérer les suggestions en fonction de la saisie
+  useEffect(() => {
+    if (foodName.trim().length > 1) {
+      const filteredSuggestions = foodDatabase
+          .filter(food => food.name.toLowerCase().includes(foodName.toLowerCase()))
+          .slice(0, 5); // Limiter à 5 suggestions
+      setSuggestions(filteredSuggestions);
+      setShowSuggestions(filteredSuggestions.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [foodName]);
 
   // Charger les données locales et synchroniser avec Firebase
   const loadNutritionData = async () => {
     try {
-      // Charger les données locales
+      // Get the last saved date from AsyncStorage
+      const lastSavedDate = await AsyncStorage.getItem(LAST_SAVED_DATE_KEY);
+
+      // If the last saved date is different from the current context date, reset data
+      if (lastSavedDate !== date) {
+        console.log('New day detected, resetting nutrition data');
+        // Reset nutrition data to zeros
+        const resetData = {
+          calorie: 0,
+          glucide: 0,
+          lipide: 0,
+          proteine: 0,
+        };
+
+        // Update the state and local storage with reset data
+        setNutritionData(resetData);
+        await saveNutritionLocally(resetData);
+
+        // Update the last saved date
+        await AsyncStorage.setItem(LAST_SAVED_DATE_KEY, date);
+
+        // Try to load from Firebase if data exists for the new date
+        const nutritionRef = doc(db, `users/${userId}/${date}`, 'nutrition');
+        const nutritionSnap = await getDoc(nutritionRef);
+
+        if (nutritionSnap.exists()) {
+          const firebaseData = nutritionSnap.data();
+          console.log('Données chargées depuis Firebase pour nouvelle date:', firebaseData);
+          const parsedData = {
+            calorie: parseFloat(firebaseData.calorie) || 0,
+            glucide: parseFloat(firebaseData.glucide) || 0,
+            lipide: parseFloat(firebaseData.lipide) || 0,
+            proteine: parseFloat(firebaseData.proteine) || 0,
+          };
+          setNutritionData(parsedData);
+          await saveNutritionLocally(parsedData);
+        }
+
+        return; // Exit function since we've handled the data
+      }
+
+      // Rest of your existing loadNutritionData function
       const localData = await getNutritionLocally();
       if (localData) {
         // Ensure all values are numbers
@@ -60,6 +119,8 @@ const NutritionScreen = () => {
           setNutritionData(parsedData);
           await saveNutritionLocally(parsedData);
         }
+        // Update the last saved date
+        await AsyncStorage.setItem(LAST_SAVED_DATE_KEY, date);
       }
     } catch (error) {
       console.error('Erreur lors du chargement des données nutritionnelles:', error);
@@ -77,6 +138,8 @@ const NutritionScreen = () => {
   const saveNutritionLocally = async (data) => {
     try {
       await AsyncStorage.setItem(LOCAL_NUTRITION_KEY, JSON.stringify(data));
+      // Also save the current date whenever we save nutrition data
+      await AsyncStorage.setItem(LAST_SAVED_DATE_KEY, date);
       console.log('Données nutritionnelles sauvegardées localement:', data);
     } catch (error) {
       console.error('Erreur lors de la sauvegarde locale des données nutritionnelles:', error);
@@ -99,11 +162,11 @@ const NutritionScreen = () => {
     try {
       console.log('Texte à parser:', text);
 
-      // Utiliser des expressions régulières pour extraire les valeurs
-      const calorieMatch = text.match(/Calories: (\d+\.?\d*)/);
-      const glucideMatch = text.match(/Carbohydrates: (\d+\.?\d*)/);
-      const lipideMatch = text.match(/Fat: (\d+\.?\d*)/);
-      const proteineMatch = text.match(/Protein: (\d+\.?\d*)/);
+      // Utiliser des expressions régulières pour extraire les valeurs en français
+      const calorieMatch = text.match(/Calories: (\d+\.?\d*)/i) || text.match(/Calories?: (\d+\.?\d*)/i);
+      const glucideMatch = text.match(/Glucides: (\d+\.?\d*)/i) || text.match(/Carbohydrates: (\d+\.?\d*)/i);
+      const lipideMatch = text.match(/Lipides: (\d+\.?\d*)/i) || text.match(/Fat: (\d+\.?\d*)/i) || text.match(/Graisses: (\d+\.?\d*)/i);
+      const proteineMatch = text.match(/Protéines: (\d+\.?\d*)/i) || text.match(/Protein: (\d+\.?\d*)/i);
 
       const results = {
         calorie: calorieMatch ? parseFloat(calorieMatch[1]) : 0,
@@ -125,7 +188,30 @@ const NutritionScreen = () => {
     }
   };
 
-  // Ajouter un repas
+  // Sélectionner un aliment depuis les suggestions
+  const selectFood = (food) => {
+    setFoodName(food.name);
+    setShowSuggestions(false);
+  };
+
+  // Calculer les valeurs nutritionnelles à partir de la base de données
+  const calculateNutritionFromDatabase = (foodName, quantity) => {
+    const food = foodDatabase.find(item => item.name.toLowerCase() === foodName.toLowerCase());
+
+    if (food) {
+      const factor = parseFloat(quantity) / 100; // Conversion pour 100g
+      return {
+        calorie: food.calorie * factor,
+        glucide: food.glucide * factor,
+        lipide: food.lipide * factor,
+        proteine: food.proteine * factor
+      };
+    }
+
+    return null; // Si l'aliment n'est pas trouvé
+  };
+
+  // Ajouter un aliment
   const addMeal = async () => {
     console.log('Début de la fonction addMeal');
     console.log(`Aliment: ${foodName}, Quantité: ${quantity}g`);
@@ -136,44 +222,52 @@ const NutritionScreen = () => {
     }
 
     try {
-      console.log('Préparation de la requête à l\'API OpenAI');
-      // Appeler l'API Open AI pour obtenir les informations nutritionnelles
-      const response = await axios.post(
-          'https://api.openai.com/v1/chat/completions',
-          {
-            model: 'gpt-3.5-turbo',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are a nutrition expert. Provide nutritional information for foods in the following format: "Calories: X kcal, Carbohydrates: Y g, Fat: Z g, Protein: W g". Adjust the values based on the quantity provided.'
-              },
-              {
-                role: 'user',
-                content: `Provide the nutritional information for ${quantity} grams of ${foodName}.`
+      let mealNutrition;
+
+      // Vérifier d'abord si l'aliment existe dans notre base de données
+      const dbNutrition = calculateNutritionFromDatabase(foodName, quantity);
+
+      if (dbNutrition) {
+        console.log('Aliment trouvé dans la base de données locale');
+        mealNutrition = dbNutrition;
+      } else {
+        console.log('Aliment non trouvé dans la base de données, utilisation de l\'API OpenAI');
+        // Appeler l'API Open AI pour obtenir les informations nutritionnelles
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+              model: 'gpt-3.5-turbo',
+              messages: [
+                {
+                  role: 'system',
+                  content: 'Vous êtes un expert en nutrition. Fournissez les informations nutritionnelles pour les aliments dans le format suivant: "Calories: X kcal, Glucides: Y g, Lipides: Z g, Protéines: W g". Ajustez les valeurs en fonction de la quantité fournie.'
+                },
+                {
+                  role: 'user',
+                  content: `Fournissez les informations nutritionnelles pour ${quantity} grammes de ${foodName}.`
+                }
+              ],
+              max_tokens: 100,
+              temperature: 0.5,
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${API_KEY}`,
+                'Content-Type': 'application/json'
               }
-            ],
-            max_tokens: 100,
-            temperature: 0.5,
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${API_KEY}`,
-              'Content-Type': 'application/json'
             }
-          }
-      );
+        );
 
-      console.log('Réponse reçue de l\'API OpenAI');
+        console.log('Réponse reçue de l\'API OpenAI');
 
-      // Extraire les informations nutritionnelles de la réponse
-      const nutritionText = response.data.choices[0].message.content;
-      console.log('Texte de réponse de l\'API:', nutritionText);
+        // Extraire les informations nutritionnelles de la réponse
+        const nutritionText = response.data.choices[0].message.content;
+        console.log('Texte de réponse de l\'API:', nutritionText);
 
-      const mealNutrition = parseNutritionData(nutritionText);
-      console.log('Données nutritionnelles pour ce repas:', mealNutrition);
+        mealNutrition = parseNutritionData(nutritionText);
+      }
 
-      // Créer un document local temporaire pour l'addition
-      console.log('Création du document local temporaire pour calculs');
+      console.log('Données nutritionnelles pour ce Aliment:', mealNutrition);
 
       // Charger les données actuelles
       let currentData = await getNutritionLocally();
@@ -214,9 +308,9 @@ const NutritionScreen = () => {
       setFoodName('');
       setQuantity('');
       setModalVisible(false);
-      console.log('Repas ajouté avec succès');
+      console.log('Aliment ajouté avec succès');
     } catch (error) {
-      console.error('Erreur lors de l’ajout du repas:', error.response ? error.response.data : error.message);
+      console.error('Erreur lors de lajout du Aliment:', error.response ? error.response.data : error.message);
 
       let errorMessage = 'Erreur lors du calcul des données nutritionnelles';
       if (error.response && error.response.status === 401) {
@@ -274,17 +368,17 @@ const NutritionScreen = () => {
             </View>
           </View>
 
-          {/* Bouton pour ajouter un repas */}
+          {/* Bouton pour ajouter un aliment */}
           <TouchableOpacity
               style={styles.addMealButton}
               onPress={() => setModalVisible(true)}
           >
             <Ionicons name="add-circle" size={24} color="#4CAF50" />
-            <Text style={styles.addMealButtonText}>Ajouter un repas</Text>
+            <Text style={styles.addMealButtonText}>Ajouter un aliment</Text>
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Modal pour ajouter un repas */}
+        {/* Modal pour ajouter un aliment */}
         <Modal
             animationType="slide"
             transparent={true}
@@ -293,15 +387,38 @@ const NutritionScreen = () => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Ajouter un repas</Text>
+              <Text style={styles.modalTitle}>Ajouter un aliment</Text>
 
               <Text style={styles.inputLabel}>Aliment</Text>
               <TextInput
                   style={styles.input}
-                  placeholder="Ex: Poulet grillé"
+                  placeholder="Ex: Poulet"
                   value={foodName}
                   onChangeText={setFoodName}
               />
+
+              {/* Afficher les suggestions */}
+              {showSuggestions && (
+                  <View style={styles.suggestionsContainer}>
+                    <FlatList
+                        data={suggestions}
+                        keyExtractor={(item) => item.name}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={styles.suggestionItem}
+                                onPress={() => selectFood(item)}
+                            >
+                              <Text style={styles.suggestionText}>{item.name}</Text>
+                              <Text style={styles.suggestionDetails}>
+                                {item.calorie} kcal/100g
+                              </Text>
+                            </TouchableOpacity>
+                        )}
+                        style={styles.suggestionsList}
+                        nestedScrollEnabled={true}
+                    />
+                  </View>
+              )}
 
               <Text style={styles.inputLabel}>Quantité (g)</Text>
               <TextInput

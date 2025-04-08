@@ -100,4 +100,31 @@ export default StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+  // Styles pour le système de suggestions
+  suggestionsContainer: {
+    maxHeight: 150,
+    width: '100%',
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+  },
+  suggestionsList: {
+    width: '100%',
+  },
+  suggestionItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  suggestionText: {
+    fontSize: 16,
+  },
+  suggestionDetails: {
+    fontSize: 14,
+    color: '#666',
+  },
 });
