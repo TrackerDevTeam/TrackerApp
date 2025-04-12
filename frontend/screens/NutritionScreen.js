@@ -12,7 +12,7 @@ import axios from 'axios';
 import { foodDatabase } from '../../backend/foodDatabase';
 
 const LOCAL_NUTRITION_KEY = 'localNutritionData';
-const API_KEY = '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';
+const API_KEY = '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';
 const LAST_SAVED_DATE_KEY = 'lastSavedNutritionDate';
 
 const NutritionScreen = () => {
@@ -194,6 +194,38 @@ const NutritionScreen = () => {
     setShowSuggestions(false);
   };
 
+  // Réinitialiser les données nutritionnelles
+  const resetNutritionData = async () => {
+    Alert.alert(
+        'Confirmer la réinitialisation',
+        'Voulez-vous vraiment remettre à zéro toutes les données nutritionnelles ?',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          {
+            text: 'Oui',
+            onPress: async () => {
+              try {
+                const resetData = {
+                  calorie: 0,
+                  glucide: 0,
+                  lipide: 0,
+                  proteine: 0,
+                };
+                setNutritionData(resetData);
+                await saveNutritionLocally(resetData);
+                await syncNutritionWithFirebase(resetData);
+                console.log('Données nutritionnelles réinitialisées avec succès');
+                Alert.alert('Succès', 'Les données nutritionnelles ont été réinitialisées.');
+              } catch (error) {
+                console.error('Erreur lors de la réinitialisation des données nutritionnelles:', error);
+                Alert.alert('Erreur', 'Erreur lors de la réinitialisation des données.');
+              }
+            },
+          },
+        ]
+    );
+  };
+
   // Calculer les valeurs nutritionnelles à partir de la base de données
   const calculateNutritionFromDatabase = (foodName, quantity) => {
     const food = foodDatabase.find(item => item.name.toLowerCase() === foodName.toLowerCase());
@@ -236,19 +268,22 @@ const NutritionScreen = () => {
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
-              model: 'gpt-3.5-turbo',
+              model: 'gpt-4o',
               messages: [
                 {
                   role: 'system',
-                  content: 'Vous êtes un expert en nutrition. Fournissez les informations nutritionnelles pour les aliments dans le format suivant: "Calories: X kcal, Glucides: Y g, Lipides: Z g, Protéines: W g". Ajustez les valeurs en fonction de la quantité fournie.'
+                  content: `Vous êtes un expert en nutrition basé sur des bases de données fiables comme USDA FoodData Central. Votre objectif est de fournir uniquement les valeurs nutritionnelles pour un aliment donné, selon la quantité précisée.
+                            Répondez toujours sous cette forme stricte, sans ajout de texte explicatif :
+                            "Calories: X kcal, Glucides: Y g, Lipides: Z g, Protéines: W g"
+                            Précisez les valeurs pour 100g si la quantité n’est pas spécifiée. Adaptez les données selon la quantité donnée. Ne fournissez que les calories, glucides, lipides, et protéines, sans micronutriments, ni description.`
                 },
                 {
                   role: 'user',
                   content: `Fournissez les informations nutritionnelles pour ${quantity} grammes de ${foodName}.`
                 }
               ],
-              max_tokens: 100,
-              temperature: 0.5,
+              max_tokens: 150,
+              temperature: 0.2,
             },
             {
               headers: {
@@ -370,11 +405,20 @@ const NutritionScreen = () => {
 
           {/* Bouton pour ajouter un aliment */}
           <TouchableOpacity
-              style={styles.addMealButton}
+              style={[styles.addMealButton, { backgroundColor: '#005EA6' }]} // Même couleur que "Réinitialiser"
               onPress={() => setModalVisible(true)}
           >
-            <Ionicons name="add-circle" size={24} color="#4CAF50" />
-            <Text style={styles.addMealButtonText}>Ajouter un aliment</Text>
+            <Ionicons name="add-circle" size={24} color="#FFF" /> {/* Icône en blanc */}
+            <Text style={[styles.addMealButtonText, { color: '#FFF' }]}>Ajouter un aliment</Text>
+          </TouchableOpacity>
+
+          {/* Bouton pour réinitialiser les données */}
+          <TouchableOpacity
+              style={[styles.addMealButton, { backgroundColor: '#005EA6' }]} // Même couleur
+              onPress={resetNutritionData}
+          >
+            <Ionicons name="refresh-circle" size={24} color="#FFF" />
+            <Text style={[styles.addMealButtonText, { color: '#FFF' }]}>Réinitialiser</Text>
           </TouchableOpacity>
         </ScrollView>
 

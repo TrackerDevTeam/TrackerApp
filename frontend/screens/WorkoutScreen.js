@@ -17,6 +17,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { UserContext } from '../../UserContext';
 
 const LOCAL_TRAINING_KEY = 'localTrainingData';
+const LAST_WORKOUT_DATE_KEY = 'lastWorkoutDate';
 
 const WorkoutScreen = () => {
     const { userId, date } = useContext(UserContext);
@@ -225,30 +226,80 @@ const WorkoutScreen = () => {
             const trainingData = await getTrainingLocally();
 
             if (!trainingData) {
+                // Récupérer la date de la dernière séance
+                const lastWorkoutDate = await getLastWorkoutDate();
+
+                // Calculer temps_depuis_derniere_seance en heures
+                const tempsDepuisDerniereSeance = calculateTempsDepuisDerniereSeance(lastWorkoutDate);
+
+                // Obtenir la date actuelle (début de la séance)
+                const currentDate = new Date().toISOString();
+
                 const defaultTrainingData = {
-                    debut: new Date().toISOString(), // Renseigner l'heure de début
+                    debut: currentDate, // Renseigner l'heure de début
                     fin: "",
-                    temps_depuis_derniere_seance: "",
+                    temps_depuis_derniere_seance: tempsDepuisDerniereSeance, // Ajouter le temps calculé
                     duree_minutes: "",
                     nombre_series_total: "",
                     nombre_reps_total: "",
                     tonnage_total: "",
                     poids_moyen_par_serie: "",
-/*                    santé_seance: {
-                        frequence_cardiaque: { moyenne: "", max: "", avant: "", après: "" },
-                        saturation_oxygene: { moyenne: "", min: "", max: "" },
-                        temperature_corporelle: { avant: "", moyenne: "", après: "" }
-                    },*/
+                    /*                    santé_seance: {
+                                        frequence_cardiaque: { moyenne: "", max: "", avant: "", après: "" },
+                                        saturation_oxygene: { moyenne: "", min: "", max: "" },
+                                        temperature_corporelle: { avant: "", moyenne: "", après: "" }
+                                    },*/
                     exercices: []
                 };
 
                 await saveTrainingLocally(defaultTrainingData);
                 console.log("Document training créé localement avec succès !");
+
+                // Mettre à jour lastWorkoutDate avec la date actuelle
+                await saveLastWorkoutDate(currentDate);
             } else {
                 console.log("Le document training existe déjà localement.");
             }
         } catch (error) {
             console.error("Erreur lors de la création du document training localement:", error);
+        }
+    };
+    // Récupérer lastWorkoutDate depuis AsyncStorage
+    const getLastWorkoutDate = async () => {
+        try {
+            const value = await AsyncStorage.getItem(LAST_WORKOUT_DATE_KEY);
+            return value ? value : null; // Retourne null si aucune date n'est trouvée
+        } catch (error) {
+            console.error('Erreur lors de la récupération de lastWorkoutDate:', error);
+            return null;
+        }
+    };
+
+// Sauvegarder lastWorkoutDate dans AsyncStorage
+    const saveLastWorkoutDate = async (date) => {
+        try {
+            await AsyncStorage.setItem(LAST_WORKOUT_DATE_KEY, date);
+            console.log('lastWorkoutDate sauvegardé:', date);
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde de lastWorkoutDate:', error);
+        }
+    };
+
+    // Calculer temps_depuis_derniere_seance (en heures)
+    const calculateTempsDepuisDerniereSeance = (lastWorkoutDate) => {
+        if (!lastWorkoutDate) {
+            return "0"; // Si aucune séance précédente, retourne "0"
+        }
+
+        try {
+            const lastDate = new Date(lastWorkoutDate);
+            const currentDate = new Date();
+            const differenceInMs = currentDate.getTime() - lastDate.getTime();
+            const differenceInHours = Math.floor(differenceInMs / (1000 * 60 * 60)); // Convertir en heures
+            return differenceInHours.toString(); // Retourne le nombre d'heures sous forme de chaîne
+        } catch (error) {
+            console.error('Erreur lors du calcul de temps_depuis_derniere_seance:', error);
+            return "0"; // Valeur par défaut en cas d'erreur
         }
     };
 

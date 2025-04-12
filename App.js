@@ -7,7 +7,7 @@ import { UserProvider } from './UserContext';
 
 const App = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [userId, setUserId] = useState("test_user");
+  const [userId, setUserId] = useState("Billy");
   const [date, setDate] = useState("");
 
   useEffect(() => {

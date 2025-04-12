@@ -47,7 +47,7 @@ const TabScreens = () => {
                                 source={iconSource}
                                 style={[
                                     styles.icon,
-                                    { tintColor: focused ? '#e32f45' : '#748c94' },
+                                    { tintColor: focused ? '#003087' : '#748c94' },
                                 ]}
                             />
                         </View>
@@ -55,7 +55,7 @@ const TabScreens = () => {
                 },
                 tabBarLabel: ({ focused }) => (
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 21 }}>
-                        <Text style={{ color: focused ? '#e32f45' : '#748c94', fontSize: 14 }}>
+                        <Text style={{ color: focused ? '#003087' : '#748c94', fontSize: 14 }}>
                             {route.name}
                         </Text>
                     </View>
