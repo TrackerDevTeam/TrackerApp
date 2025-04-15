@@ -1,0 +1,52 @@
+{
+  "product_name": "poireaux",
+  "quantity": "100g",
+  "type": "dinner",
+  "time": "21:30",
+  "nutrition": {
+    "calories": 61,
+    "proteines": 1.5,
+    "glucides": 14.2,
+    "dont_sucres": 3.9,
+    "acides_gras_satures": 0.2,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.2
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 1.8,
+    "vitamines": {
+      "A": 83,
+      "B": {
+        "B1": 0.2,
+        "B2": 0.1,
+        "B3": 0.3,
+        "B5": 0.1,
+        "B6": 0.2,
+        "B8": 0.2,
+        "B9": 64,
+        "B12": 0
+      },
+      "C": 18,
+      "D": 0,
+      "E": 0.5,
+      "K": 47
+    },
+    "mineraux": {
+      "calcium": 83,
+      "sodium": 3,
+      "magnesium": 18,
+      "potassium": 180
+    },
+    "oligoelements": {
+      "zinc": 0.2,
+      "silicium": 0,
+      "fer": 1.2,
+      "selenium": 0.5
+    }
+  }
+}

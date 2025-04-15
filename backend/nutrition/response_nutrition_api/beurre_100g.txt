@@ -1,0 +1,52 @@
+{
+  "product_name": "beurre",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 717,
+    "proteines": 0.9,
+    "glucides": 0.1,
+    "dont_sucres": 0.1,
+    "acides_gras_satures": 51,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 3.0
+      },
+      "monoinsatures": {
+        "omega9": 24.0
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 684,
+      "B": {
+        "B1": 0.02,
+        "B2": 0.03,
+        "B3": 0.0,
+        "B5": 0.1,
+        "B6": 0.01,
+        "B8": 0.0,
+        "B9": 0.0,
+        "B12": 0.2
+      },
+      "C": 0,
+      "D": 1.0,
+      "E": 2.3,
+      "K": 0.7
+    },
+    "mineraux": {
+      "calcium": 24,
+      "sodium": 11,
+      "magnesium": 2,
+      "potassium": 24
+    },
+    "oligoelements": {
+      "zinc": 0.1,
+      "silicium": 0.0,
+      "fer": 0.02,
+      "selenium": 0.0
+    }
+  }
+}

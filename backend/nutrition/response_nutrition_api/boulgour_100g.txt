@@ -1,0 +1,52 @@
+{
+  "product_name": "boulgour",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 342,
+    "proteines": 12.3,
+    "glucides": 75.9,
+    "dont_sucres": 0.9,
+    "acides_gras_satures": 0.2,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.1
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 10.8,
+    "vitamines": {
+      "A": 0,
+      "B": {
+        "B1": 0.09,
+        "B2": 0.03,
+        "B3": 4.0,
+        "B5": 0.6,
+        "B6": 0.1,
+        "B8": 0,
+        "B9": 0.05,
+        "B12": 0
+      },
+      "C": 0,
+      "D": 0,
+      "E": 0.2,
+      "K": 2.0
+    },
+    "mineraux": {
+      "calcium": 18,
+      "sodium": 5,
+      "magnesium": 32,
+      "potassium": 410
+    },
+    "oligoelements": {
+      "zinc": 1.2,
+      "silicium": 0,
+      "fer": 0.6,
+      "selenium": 0
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "product_name": "soupe de legumes",
+  "quantity": "100g00",
+  "nutrition": {
+    "calories": 40,
+    "proteines": 1.5,
+    "glucides": 8,
+    "dont_sucres": 3,
+    "acides_gras_satures": 0.2,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.2
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 2,
+    "vitamines": {
+      "A": 500,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.1,
+        "B3": 0.5,
+        "B5": 0.2,
+        "B6": 0.1,
+        "B8": 0.01,
+        "B9": 30,
+        "B12": 0
+      },
+      "C": 20,
+      "D": 0,
+      "E": 1,
+      "K": 10
+    },
+    "mineraux": {
+      "calcium": 30,
+      "sodium": 300,
+      "magnesium": 15,
+      "potassium": 250
+    },
+    "oligoelements": {
+      "zinc": 0.2,
+      "silicium": 0.1,
+      "fer": 0.5,
+      "selenium": 0.2
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "product_name": "lait",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "05:00",
+  "nutrition": {
+    "calories": 42,
+    "proteines": 3.4,
+    "glucides": 4.8,
+    "dont_sucres": 4.8,
+    "acides_gras_satures": 1.0,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.03,
+        "omega6": 0.1
+      },
+      "monoinsatures": {
+        "omega9": 0.2
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 50,
+      "B": {
+        "B1": 0.04,
+        "B2": 0.18,
+        "B3": 0.1,
+        "B5": 0.4,
+        "B6": 0.04,
+        "B8": 0.5,
+        "B9": 5,
+        "B12": 0.4
+      },
+      "C": 1,
+      "D": 1,
+      "E": 0.1,
+      "K": 0.2
+    },
+    "mineraux": {
+      "calcium": 120,
+      "sodium": 50,
+      "magnesium": 10,
+      "potassium": 150
+    },
+    "oligoelements": {
+      "zinc": 0.4,
+      "silicium": 0.1,
+      "fer": 0.03,
+      "selenium": 1.5
+    }
+  }
+}

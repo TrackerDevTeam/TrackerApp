@@ -1,0 +1,52 @@
+{
+  "product_name": "pates",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "08:00",
+  "nutrition": {
+    "calories": 131,
+    "proteines": 5.0,
+    "glucides": 25.0,
+    "dont_sucres": 0.9,
+    "acides_gras_satures": 0.3,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.5
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 1.5,
+    "vitamines": {
+      "A": 0,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.02,
+        "B3": 1.0,
+        "B5": 0.3,
+        "B6": 0.1,
+        "B8": 0,
+        "B9": 5.0,
+        "B12": 0
+      },
+      "C": 0,
+      "D": 0,
+      "E": 0.1,
+      "K": 0
+    },
+    "mineraux": {
+      "calcium": 7,
+      "sodium": 1,
+      "magnesium": 18,
+      "potassium": 44
+    },
+    "oligoelements": {
+      "zinc": 0.5,
+      "silicium": 0,
+      "fer": 0.5,
+      "selenium": 0
+    }
+  }
+}

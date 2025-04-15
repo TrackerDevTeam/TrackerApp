@@ -1,0 +1,48 @@
+{
+  "nutrition": {
+    "calories": "63 kcal",
+    "proteines": "1 g",
+    "glucides": "16 g",
+    "dont_sucres": "13 g",
+    "acides_gras_satures": "0.1 g",
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": "0.1 g",
+        "omega6": "0.1 g"
+      },
+      "monoinsatures": {
+        "omega9": "0.1 g"
+      }
+    },
+    "fibres": "2 g",
+    "vitamines": {
+      "A": "64 µg",
+      "B": {
+        "B1": "0.02 µg",
+        "B2": "0.02 µg",
+        "B3": "0.2 mg",
+        "B5": "0.1 mg",
+        "B6": "0.1 mg",
+        "B8": "0.1 µg",
+        "B9": "5 µg",
+        "B12": "0 µg"
+      },
+      "C": "10 mg",
+      "D": "0 µg",
+      "E": "0.2 mg",
+      "K": "2.1 µg"
+    },
+    "mineraux": {
+      "calcium": "16 mg",
+      "sodium": "3 mg",
+      "magnesium": "11 mg",
+      "potassium": "222 mg"
+    },
+    "oligoelements": {
+      "zinc": "0.1 mg",
+      "silicium": "0 mg",
+      "fer": "0.2 mg",
+      "selenium": "0 µg"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "product_name": "salade",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "07:30",
+  "nutrition": {
+    "calories": 14,
+    "proteines": 1.2,
+    "glucides": 2.9,
+    "dont_sucres": 0.8,
+    "acides_gras_satures": 0.1,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.2
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 1.0,
+    "vitamines": {
+      "A": 181,
+      "B": {
+        "B1": 0.05,
+        "B2": 0.1,
+        "B3": 0.2,
+        "B5": 0.1,
+        "B6": 0.1,
+        "B8": 0.1,
+        "B9": 38,
+        "B12": 0
+      },
+      "C": 9.2,
+      "D": 0,
+      "E": 0.3,
+      "K": 126.3
+    },
+    "mineraux": {
+      "calcium": 36,
+      "sodium": 28,
+      "magnesium": 15,
+      "potassium": 194
+    },
+    "oligoelements": {
+      "zinc": 0.1,
+      "silicium": 0.1,
+      "fer": 0.5,
+      "selenium": 0.2
+    }
+  }
+}

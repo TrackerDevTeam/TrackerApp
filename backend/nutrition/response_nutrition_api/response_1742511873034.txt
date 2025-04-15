@@ -1,0 +1,31 @@
+Requête : tablette de chocolat
+
+Réponse ChatGPT :
+Les informations nutritionnelles pour 100 g de tablette de chocolat peuvent varier en fonction du type de chocolat (noir, au lait, blanc) et de la marque. Voici une estimation générale pour du chocolat noir (environ 70% de cacao) :
+
+- **Calories** : environ 500-600 kcal
+- **Protéines** : environ 7-8 g
+- **Lipides** : environ 30-35 g
+  - dont acides gras saturés : environ 18-20 g
+- **Glucides** : environ 40-50 g
+  - dont sucres : environ 20-30 g
+
+Pour du chocolat au lait, les valeurs peuvent être légèrement différentes :
+
+- **Calories** : environ 500-550 kcal
+- **Protéines** : environ 6-8 g
+- **Lipides** : environ 25-30 g
+  - dont acides gras saturés : environ 15-18 g
+- **Glucides** : environ 50-60 g
+  - dont sucres : environ 40-50 g
+
+Pour le chocolat blanc, les valeurs nutritionnelles sont également différentes :
+
+- **Calories** : environ 540-580 kcal
+- **Protéines** : environ 6-7 g
+- **Lipides** : environ 30-35 g
+  - dont acides gras saturés : environ 18-20 g
+- **Glucides** : environ 55-60 g
+  - dont sucres : environ 50-55 g
+
+Ces valeurs sont des moyennes et peuvent varier selon les marques et les recettes spécifiques. Il est toujours bon de vérifier l'étiquette nutritionnelle pour des informations précises.

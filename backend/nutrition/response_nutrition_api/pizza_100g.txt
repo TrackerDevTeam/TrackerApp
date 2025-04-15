@@ -1,0 +1,52 @@
+{
+  "product_name": "pizza",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "08:00",
+  "nutrition": {
+    "calories": 266,
+    "proteines": 11,
+    "glucides": 36,
+    "dont_sucres": 3,
+    "acides_gras_satures": 10,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.5
+      },
+      "monoinsatures": {
+        "omega9": 2.5
+      }
+    },
+    "fibres": 2.5,
+    "vitamines": {
+      "A": 200,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.2,
+        "B3": 1.5,
+        "B5": 0.5,
+        "B6": 0.1,
+        "B8": 0.1,
+        "B9": 30,
+        "B12": 0.5
+      },
+      "C": 1,
+      "D": 0,
+      "E": 0.5,
+      "K": 5
+    },
+    "mineraux": {
+      "calcium": 150,
+      "sodium": 600,
+      "magnesium": 20,
+      "potassium": 200
+    },
+    "oligoelements": {
+      "zinc": 1,
+      "silicium": 0.1,
+      "fer": 1.5,
+      "selenium": 10
+    }
+  }
+}

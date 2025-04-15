@@ -1,0 +1,52 @@
+{
+  "product_name": "riz",
+  "quantity": "100g",
+  "type": "breakfast",
+  "time": "06:30",
+  "nutrition": {
+    "calories": 130,
+    "proteines": 2.7,
+    "glucides": 28.2,
+    "dont_sucres": 0.1,
+    "acides_gras_satures": 0.3,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 0.5
+      },
+      "monoinsatures": {
+        "omega9": 0.1
+      }
+    },
+    "fibres": 0.4,
+    "vitamines": {
+      "A": 0,
+      "B": {
+        "B1": 0.07,
+        "B2": 0.02,
+        "B3": 0.4,
+        "B5": 0.6,
+        "B6": 0.1,
+        "B8": 0,
+        "B9": 4,
+        "B12": 0
+      },
+      "C": 0,
+      "D": 0,
+      "E": 0.1,
+      "K": 0.1
+    },
+    "mineraux": {
+      "calcium": 10,
+      "sodium": 1,
+      "magnesium": 12,
+      "potassium": 26
+    },
+    "oligoelements": {
+      "zinc": 0.4,
+      "silicium": 0,
+      "fer": 0.2,
+      "selenium": 0.6
+    }
+  }
+}

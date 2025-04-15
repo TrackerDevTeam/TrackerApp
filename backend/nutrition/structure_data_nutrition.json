@@ -1,0 +1,208 @@
+{
+    "repas": [
+        {
+            "type": "petit-déjeuner",
+            "heure": "7:30",
+            "nutrition": {
+                "calories": 2500,
+                "proteines": 150,
+                "glucides": 300,
+                "dont sucres": 80,
+                "acides gras saturés": 80,
+                "acides gras insaturés": {
+                    "polyinsaturés": {
+                        "omega 3": 10,
+                        "omega 6": 10
+                    },
+                    "monoinsaturés": {
+                        "omega 9": 10
+                    }
+                },
+                "fibres": 10,
+                "vitamines": {
+                    "A": 10,
+                    "B": {
+                        "B1": 10,
+                        "B2": 10,
+                        "B3": 10,
+                        "B5": 10,
+                        "B6": 10,
+                        "B8": 10,
+                        "B9": 10,
+                        "B12": 10
+                    },
+                    "C": 10,
+                    "D": 10,
+                    "E": 10,
+                    "K": 10
+                },
+                "minéraux": {
+                    "calcium": 10,
+                    "sodium": 10,
+                    "magnesium": 10,
+                    "potassium": 10
+                },
+                "oligoéléments": {
+                    "zinc": 10,
+                    "silicium": 10,
+                    "fer": 10,
+                    "selenium": 10
+                },
+                "eau": 2.5
+            }
+        },
+        {
+            "type": "déjeuner",
+            "heure": "12:30",
+            "nutrition": {
+                "calories": 2500,
+                "proteines": 150,
+                "glucides": 300,
+                "dont sucres": 80,
+                "acides gras saturés": 80,
+                "acides gras insaturés": {
+                    "polyinsaturés": {
+                        "omega 3": 10,
+                        "omega 6": 10
+                    },
+                    "monoinsaturés": {
+                        "omega 9": 10
+                    }
+                },
+                "fibres": 10,
+                "vitamines": {
+                    "A": 10,
+                    "B": {
+                        "B1": 10,
+                        "B2": 10,
+                        "B3": 10,
+                        "B5": 10,
+                        "B6": 10,
+                        "B8": 10,
+                        "B9": 10,
+                        "B12": 10
+                    },
+                    "C": 10,
+                    "D": 10,
+                    "E": 10,
+                    "K": 10
+                },
+                "minéraux": {
+                    "calcium": 10,
+                    "sodium": 10,
+                    "magnesium": 10,
+                    "potassium": 10
+                },
+                "oligoéléments": {
+                    "zinc": 10,
+                    "silicium": 10,
+                    "fer": 10,
+                    "selenium": 10
+                },
+                "eau": 2.5
+            }
+        },
+        {
+            "type": "collation",
+            "heure": "16:30",
+            "nutrition": {
+                "calories": 2500,
+                "proteines": 150,
+                "glucides": 300,
+                "dont sucres": 80,
+                "acides gras saturés": 80,
+                "acides gras insaturés": {
+                    "polyinsaturés": {
+                        "omega 3": 10,
+                        "omega 6": 10
+                    },
+                    "monoinsaturés": {
+                        "omega 9": 10
+                    }
+                },
+                "fibres": 10,
+                "vitamines": {
+                    "A": 10,
+                    "B": {
+                        "B1": 10,
+                        "B2": 10,
+                        "B3": 10,
+                        "B5": 10,
+                        "B6": 10,
+                        "B8": 10,
+                        "B9": 10,
+                        "B12": 10
+                    },
+                    "C": 10,
+                    "D": 10,
+                    "E": 10,
+                    "K": 10
+                },
+                "minéraux": {
+                    "calcium": 10,
+                    "sodium": 10,
+                    "magnesium": 10,
+                    "potassium": 10
+                },
+                "oligoéléments": {
+                    "zinc": 10,
+                    "silicium": 10,
+                    "fer": 10,
+                    "selenium": 10
+                },
+                "eau": 2.5
+            }
+        },
+        {
+            "type": "diner",
+            "heure": "12:30",
+            "nutrition": {
+                "calories": 2500,
+                "proteines": 150,
+                "glucides": 300,
+                "dont sucres": 80,
+                "acides gras saturés": 80,
+                "acides gras insaturés": {
+                    "polyinsaturés": {
+                        "omega 3": 10,
+                        "omega 6": 10
+                    },
+                    "monoinsaturés": {
+                        "omega 9": 10
+                    }
+                },
+                "fibres": 10,
+                "vitamines": {
+                    "A": 10,
+                    "B": {
+                        "B1": 10,
+                        "B2": 10,
+                        "B3": 10,
+                        "B5": 10,
+                        "B6": 10,
+                        "B8": 10,
+                        "B9": 10,
+                        "B12": 10
+                    },
+                    "C": 10,
+                    "D": 10,
+                    "E": 10,
+                    "K": 10
+                },
+                "minéraux": {
+                    "calcium": 10,
+                    "sodium": 10,
+                    "magnesium": 10,
+                    "potassium": 10
+                },
+                "oligoéléments": {
+                    "zinc": 10,
+                    "silicium": 10,
+                    "fer": 10,
+                    "selenium": 10
+                },
+                "eau": 2.5
+            }
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+  "product_name": "chocapic",
+  "quantity": "100g",
+  "nutrition": {
+    "calories": 389,
+    "proteines": 8.5,
+    "glucides": 77.5,
+    "dont_sucres": 30,
+    "acides_gras_satures": 1.5,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.0
+      },
+      "monoinsatures": {
+        "omega9": 0.5
+      }
+    },
+    "fibres": 3.5,
+    "vitamines": {
+      "A": 0.1,
+      "B": {
+        "B1": 0.1,
+        "B2": 0.2,
+        "B3": 1.0,
+        "B5": 0.5,
+        "B6": 0.1,
+        "B8": 0.01,
+        "B9": 0.05,
+        "B12": 0.0
+      },
+      "C": 0.5,
+      "D": 0.0,
+      "E": 0.5,
+      "K": 0.0
+    },
+    "mineraux": {
+      "calcium": 120,
+      "sodium": 0.1,
+      "magnesium": 30,
+      "potassium": 300
+    },
+    "oligoelements": {
+      "zinc": 1.0,
+      "silicium": 0.0,
+      "fer": 4.0,
+      "selenium": 0.0
+    }
+  }
+}

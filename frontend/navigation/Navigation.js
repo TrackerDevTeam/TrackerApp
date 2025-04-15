@@ -7,6 +7,7 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 // Import des écrans
 import HomeScreen from '../screens/HomeScreen';
 import NutritionScreen from '../screens/NutritionScreen';
+import WatchScreen from '../screens/WatchScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';

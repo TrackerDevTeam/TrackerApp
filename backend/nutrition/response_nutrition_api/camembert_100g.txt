@@ -1,0 +1,50 @@
+{
+  "product_name": "camembert",
+  "quantity": "100g",
+  "nutrition": {
+    "calories": 300,
+    "proteines": 20,
+    "glucides": 0.5,
+    "dont_sucres": 0.5,
+    "acides_gras_satures": 21,
+    "acides_gras_insatures": {
+      "polyinsatures": {
+        "omega3": 0.1,
+        "omega6": 1.5
+      },
+      "monoinsatures": {
+        "omega9": 6.5
+      }
+    },
+    "fibres": 0,
+    "vitamines": {
+      "A": 500,
+      "B": {
+        "B1": 0.05,
+        "B2": 1.5,
+        "B3": 0.1,
+        "B5": 0.5,
+        "B6": 0.1,
+        "B8": 0.5,
+        "B9": 30,
+        "B12": 1.5
+      },
+      "C": 0,
+      "D": 0.5,
+      "E": 0.5,
+      "K": 0.5
+    },
+    "mineraux": {
+      "calcium": 500,
+      "sodium": 600,
+      "magnesium": 20,
+      "potassium": 150
+    },
+    "oligoelements": {
+      "zinc": 3,
+      "silicium": 0.1,
+      "fer": 0.1,
+      "selenium": 0.5
+    }
+  }
+}
