@@ -2,19 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import { decode } from 'base-64';
+import Header from '../components/common/Header';
+import styles from './styles/WatchScreen.styles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-// UUIDs du service et de la caractéristique BLE (à adapter selon votre appareil)
+// UUIDs du service et de la caractéristique BLE
 const SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
 const CHARACTERISTIC_UUID = "abcd1234-1234-1234-1234-abcdef123456";
 
 const WatchScreen = () => {
-  // État pour gérer BLE et les données
   const [manager] = useState(new BleManager());
   const [devices, setDevices] = useState([]);
   const [connectedDevice, setConnectedDevice] = useState(null);
-  const [sensorData, setSensorData] = useState(null);
+  const [heartRate, setHeartRate] = useState(null);
+  const [spo2, setSpo2] = useState(null);
 
-  // Initialisation au montage du composant
   useEffect(() => {
     const init = async () => {
       if (Platform.OS === 'android') {
@@ -31,13 +33,11 @@ const WatchScreen = () => {
 
     init();
 
-    // Nettoyage au démontage
     return () => {
       manager.destroy();
     };
   }, []);
 
-  // Demande de permissions BLE sur Android
   const requestPermissions = async () => {
     try {
       const granted = await PermissionsAndroid.requestMultiple([
@@ -55,7 +55,6 @@ const WatchScreen = () => {
     }
   };
 
-  // Scan des appareils BLE
   const scanDevices = () => {
     setDevices([]);
     manager.startDeviceScan(null, null, (error, device) => {
@@ -73,13 +72,11 @@ const WatchScreen = () => {
       }
     });
 
-    // Arrêt du scan après 10 secondes
     setTimeout(() => {
       manager.stopDeviceScan();
     }, 10000);
   };
 
-  // Connexion à un appareil BLE
   const connectToDevice = async (device) => {
     try {
       const connected = await device.connect();
@@ -88,14 +85,22 @@ const WatchScreen = () => {
       connected.monitorCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID, (error, characteristic) => {
         if (error) {
           console.log("Erreur lors de la surveillance:", error);
-          connectToDevice(device); // Tentative de reconnexion
+          connectToDevice(device);
           return;
         }
         const data = characteristic.value;
         if (data) {
           try {
             const decodedData = decode(data);
-            setSensorData(decodedData);
+            let sensorValues;
+            try {
+              sensorValues = JSON.parse(decodedData);
+            } catch (e) {
+              console.log("Erreur de parsing JSON:", e);
+              return;
+            }
+            setHeartRate(sensorValues.hr || null);
+            setSpo2(sensorValues.spo2 || null);
           } catch (e) {
             console.log("Erreur de décodage:", e);
           }
@@ -103,31 +108,65 @@ const WatchScreen = () => {
       });
     } catch (e) {
       console.log("Erreur lors de la connexion:", e);
-      setTimeout(() => connectToDevice(device), 2000); // Réessayer après 2 secondes
+      setTimeout(() => connectToDevice(device), 2000);
     }
   };
 
-  // Rendu de l'interface utilisateur
+  const disconnectDevice = async () => {
+    if (connectedDevice) {
+      try {
+        await connectedDevice.cancelConnection();
+        console.log("Déconnexion réussie");
+      } catch (error) {
+        console.log("Erreur lors de la déconnexion:", error);
+      }
+      setConnectedDevice(null);
+      setHeartRate(null);
+      setSpo2(null);
+    }
+  };
+
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, marginBottom: 10 }}>Appareil BLE trouvé(s) :</Text>
-      <FlatList
-        data={devices}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 10 }}>
-            <Text>{item.name || "Nom inconnu"}</Text>
-            <Button title="Connecter" onPress={() => connectToDevice(item)} />
+    <View style={styles.container}>
+      <Header title="Montre" />
+      <View style={styles.contentContainer}>
+        <Text style={styles.textBLE}>Appareil(s) BLE trouvé(s) :</Text>
+        <FlatList
+          data={devices}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.deviceItem}>
+              <Text style={styles.deviceText}>{item.name || "Nom inconnu"}</Text>
+              <Button title="Connecter" onPress={() => connectToDevice(item)} />
+            </View>
+          )}
+        />
+        {connectedDevice && (
+          <View style={styles.connectedSection}>
+            <Text style={styles.connectedText}>Connecté à {connectedDevice.name}</Text>
+            <Text style={styles.sensorStatus}>
+              Données du capteur: {heartRate || spo2 ? "Reçues" : "En attente..."}
+            </Text>
+            <Button title="Déconnecter" onPress={disconnectDevice} color="#FF6347" />
           </View>
         )}
-      />
-      {connectedDevice && (
-        <View style={{ marginTop: 20 }}>
-          <Text>Connecté à {connectedDevice.name}</Text>
-          <Text>Donnée du capteur: {sensorData || "En attente..."}</Text>
+        <Button title="Lancer le scan" onPress={scanDevices} />
+        <View style={styles.healthSection}>
+          <Text style={styles.titlePage}>ETAT DE SANTE</Text>
+          <View style={styles.dataItem}>
+            <Ionicons name="heart" size={24} color="#FF6347" style={styles.icon} />
+            <Text style={styles.dataText}>
+              Fréquence cardiaque : {heartRate ? `${heartRate} bpm` : "N/A"}
+            </Text>
+          </View>
+          <View style={styles.dataItem}>
+            <Ionicons name="pulse" size={24} color="#FF6347" style={styles.icon} />
+            <Text style={styles.dataText}>
+              SpO2 : {spo2 ? `${spo2} %` : "N/A"}
+            </Text>
+          </View>
         </View>
-      )}
-      <Button title="Relancer le scan" onPress={scanDevices} />
+      </View>
     </View>
   );
 };

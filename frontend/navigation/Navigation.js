@@ -7,7 +7,6 @@ import NutritionScreen from '../screens/NutritionScreen';
 import WatchScreen from '../screens/WatchScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
 
 // Importation des images personnalisées
 import homeIcon from '../assets/icon/home.png';
@@ -18,8 +17,6 @@ import workoutIcon from '../assets/icon/training.png';
 import workoutIconFocused from '../assets/icon/training.png';
 import profileIcon from '../assets/icon/profile.png';
 import profileIconFocused from '../assets/icon/profile.png';
-import settingsIcon from '../assets/icon/settings.png';
-import settingsIconFocused from '../assets/icon/settings.png';
 import watchIcon from '../assets/icon/montre.png';
 import watchIconFocused from '../assets/icon/montre.png';
 // Ajoute les autres images de la même manière...
@@ -51,10 +48,7 @@ const Navigation = () => {
                         } else if (route.name === 'Watch') {
                             iconSource = focused ? watchIconFocused : watchIcon; // À définir
                         } else if (route.name === 'Profile') {
-                            iconSource = focused ? profileIconFocused : profileIcon; // À définir
-                        } else if (route.name === 'Settings') {
-                            iconSource = focused ? settingsIconFocused : settingsIcon; // À définir
-                        }
+                            iconSource = focused ? profileIconFocused : profileIcon;} // À définir
 
                         return <Image source={iconSource} style={{ width: size, height: size }} />;
                     },
@@ -69,7 +63,6 @@ const Navigation = () => {
                 <Tab.Screen name="Workout" component={WorkoutScreen} />
                 <Tab.Screen name="Watch" component={WatchScreen} />
                 <Tab.Screen name="Profile" component={ProfileScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
             </Tab.Navigator>
         </NavigationContainer>
     );
