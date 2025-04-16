@@ -3,7 +3,7 @@ import React, { createContext, useState, useEffect } from 'react';
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [userId, setUserId] = useState("test_user");
+    const [userId, setUserId] = useState("Billy");
     const [date, setDate] = useState("");
 
     useEffect(() => {

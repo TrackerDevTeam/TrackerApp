@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.guime1234.snack20a79877cca84cd784881bdcbbf75519'
+    namespace 'com.billygrosexpo.snack20a79877cca84cd784881bdcbbf75519'
     defaultConfig {
-        applicationId 'com.guime1234.snack20a79877cca84cd784881bdcbbf75519'
+        applicationId 'com.billygrosexpo.snack20a79877cca84cd784881bdcbbf75519'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

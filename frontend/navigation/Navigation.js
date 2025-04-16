@@ -18,7 +18,7 @@ import homeIcon from '../assets/icon/home.png';
 import nutritionIcon from '../assets/icon/nutrition.png';
 import workoutIcon from '../assets/icon/training.png';
 import sleepIcon from '../assets/icon/sleep.png';
-
+import watchIcon from '../assets/icon/montre.png';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -40,6 +40,8 @@ const TabScreens = () => {
                         iconSource = workoutIcon;
                     } else if (route.name === 'Sleep') {
                         iconSource = sleepIcon;
+                    } else if (route.name === 'Watch') {
+                    iconSource = watchIcon;
                     }
 
                     return (
@@ -68,6 +70,7 @@ const TabScreens = () => {
             <Tab.Screen name="Nutrition" component={NutritionScreen} />
             <Tab.Screen name="Workout" component={WorkoutScreen} />
             <Tab.Screen name="Sleep" component={SleepScreen} />
+            <Tab.Screen name="Watch" component={WatchScreen} />
         </Tab.Navigator>
     );
 };

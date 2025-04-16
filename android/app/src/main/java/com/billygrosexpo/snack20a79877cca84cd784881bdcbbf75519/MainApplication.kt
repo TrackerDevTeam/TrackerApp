@@ -1,4 +1,4 @@
-package com.guime1234.snack20a79877cca84cd784881bdcbbf75519
+package com.billygrosexpo.snack20a79877cca84cd784881bdcbbf75519
 
 import android.app.Application
 import android.content.res.Configuration

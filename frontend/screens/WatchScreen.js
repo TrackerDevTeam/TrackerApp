@@ -1,43 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, PermissionsAndroid, Platform } from 'react-native';
+import { View, Text, StyleSheet, Button, PermissionsAndroid, Platform } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
-import { decode } from 'base-64';
+import { LineChart } from 'react-native-svg-charts';
+import Header from '../components/common/Header';
 
-// UUIDs du service et de la caractéristique BLE (à adapter selon votre appareil)
 const SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
 const CHARACTERISTIC_UUID = "abcd1234-1234-1234-1234-abcdef123456";
 
 const WatchScreen = () => {
-  // État pour gérer BLE et les données
   const [manager] = useState(new BleManager());
-  const [devices, setDevices] = useState([]);
   const [connectedDevice, setConnectedDevice] = useState(null);
-  const [sensorData, setSensorData] = useState(null);
+  const [bpmData, setBpmData] = useState([]);
+  const [spo2Data, setSpo2Data] = useState([]);
+  const [isScanning, setIsScanning] = useState(false);
 
-  // Initialisation au montage du composant
   useEffect(() => {
     const init = async () => {
       if (Platform.OS === 'android') {
         await requestPermissions();
       }
-
-      const subscription = manager.onStateChange((state) => {
-        if (state === 'PoweredOn') {
-          scanDevices();
-          subscription.remove();
-        }
-      }, true);
     };
-
     init();
 
-    // Nettoyage au démontage
     return () => {
+      if (connectedDevice) {
+        connectedDevice.cancelConnection();
+      }
       manager.destroy();
     };
   }, []);
 
-  // Demande de permissions BLE sur Android
   const requestPermissions = async () => {
     try {
       const granted = await PermissionsAndroid.requestMultiple([
@@ -45,7 +37,6 @@ const WatchScreen = () => {
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       ]);
-
       const allGranted = Object.values(granted).every(value => value === PermissionsAndroid.RESULTS.GRANTED);
       if (!allGranted) {
         console.warn("Certaines permissions Bluetooth n'ont pas été accordées.");
@@ -55,81 +46,83 @@ const WatchScreen = () => {
     }
   };
 
-  // Scan des appareils BLE
-  const scanDevices = () => {
-    setDevices([]);
-    manager.startDeviceScan(null, null, (error, device) => {
-      if (error) {
-        console.log("Erreur du scan:", error);
-        return;
-      }
-      if (device && device.name && device.name.includes("M5Stack")) {
-        setDevices(prevDevices => {
-          if (!prevDevices.find(d => d.id === device.id)) {
-            return [...prevDevices, device];
-          }
-          return prevDevices;
-        });
-      }
-    });
-
-    // Arrêt du scan après 10 secondes
-    setTimeout(() => {
-      manager.stopDeviceScan();
-    }, 10000);
-  };
-
-  // Connexion à un appareil BLE
-  const connectToDevice = async (device) => {
+  const rescanAndConnect = async () => {
+    setIsScanning(true);
     try {
-      const connected = await device.connect();
-      setConnectedDevice(connected);
-      await connected.discoverAllServicesAndCharacteristics();
-      connected.monitorCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID, (error, characteristic) => {
-        if (error) {
-          console.log("Erreur lors de la surveillance:", error);
-          connectToDevice(device); // Tentative de reconnexion
-          return;
-        }
-        const data = characteristic.value;
-        if (data) {
-          try {
-            const decodedData = decode(data);
-            setSensorData(decodedData);
-          } catch (e) {
-            console.log("Erreur de décodage:", e);
+      // Assume M5StickC_Heart is paired via phone settings
+      const devices = await manager.devices([]);
+      const device = devices.find(d => d.name === "M5StickC_Heart");
+      if (device) {
+        const connected = await device.connect();
+        await connected.discoverAllServicesAndCharacteristics();
+        setConnectedDevice(connected);
+
+        connected.monitorCharacteristicForService(SERVICE_UUID, CHARACTERISTIC_UUID, (error, characteristic) => {
+          if (error) {
+            console.log("Erreur de surveillance:", error);
+            return;
           }
-        }
-      });
+          if (characteristic.value) {
+            const data = characteristic.value;
+            const [bpmPart, spo2Part] = data.split(',');
+            const bpm = parseInt(bpmPart.split(':')[1]);
+            const spo2 = parseInt(spo2Part.split(':')[1]);
+            setBpmData(prev => [...prev.slice(-50), bpm]); // Limit to last 50 points
+            setSpo2Data(prev => [...prev.slice(-50), spo2]); // Limit to last 50 points
+          }
+        });
+      } else {
+        console.log("Appareil M5StickC_Heart non trouvé ou non appairé.");
+      }
     } catch (e) {
-      console.log("Erreur lors de la connexion:", e);
-      setTimeout(() => connectToDevice(device), 2000); // Réessayer après 2 secondes
+      console.log("Erreur de connexion:", e);
+    } finally {
+      setIsScanning(false);
     }
   };
 
-  // Rendu de l'interface utilisateur
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 20, marginBottom: 10 }}>Appareil BLE trouvé(s) :</Text>
-      <FlatList
-        data={devices}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 10 }}>
-            <Text>{item.name || "Nom inconnu"}</Text>
-            <Button title="Connecter" onPress={() => connectToDevice(item)} />
-          </View>
+      <View style={styles.container}>
+        <Header title="Watch" />
+        <Text style={styles.title}>Données du capteur M5StickC</Text>
+        {connectedDevice && (
+            <View>
+              <Text>Connecté à: {connectedDevice.name}</Text>
+              <LineChart
+                  style={styles.chart}
+                  data={bpmData}
+                  svg={{ stroke: 'red' }}
+                  contentInset={{ top: 20, bottom: 20 }}
+                  yMax={120}
+                  yMin={40}
+              >
+              </LineChart>
+              <Text>BPM</Text>
+              <LineChart
+                  style={styles.chart}
+                  data={spo2Data}
+                  svg={{ stroke: 'green' }}
+                  contentInset={{ top: 20, bottom: 20 }}
+                  yMax={100}
+                  yMin={90}
+              >
+              </LineChart>
+              <Text>SPO2 (%)</Text>
+            </View>
         )}
-      />
-      {connectedDevice && (
-        <View style={{ marginTop: 20 }}>
-          <Text>Connecté à {connectedDevice.name}</Text>
-          <Text>Donnée du capteur: {sensorData || "En attente..."}</Text>
-        </View>
-      )}
-      <Button title="Relancer le scan" onPress={scanDevices} />
-    </View>
+        <Button
+            title={isScanning ? "Recherche en cours..." : "Rescan"}
+            onPress={rescanAndConnect}
+            disabled={isScanning}
+        />
+      </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+  title: { fontSize: 20, marginBottom: 10 },
+  chart: { height: 200, marginVertical: 10 },
+});
 
 export default WatchScreen;

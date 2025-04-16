@@ -41,7 +41,7 @@ const App = () => {
   const checkAndCreateCollectionForToday = async (userId) => {
     try {
       const today = new Date();
-      const dateString = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+      const dateString = `${String(today.getDate()).padStart(2, '0')}_${String(today.getMonth() + 1).padStart(2, '0')}_${today.getFullYear()}`;
       setDate(dateString); // Mettre à jour la date dans le contexte
 
       const dateCollectionRef = collection(db, `users/${userId}/${dateString}`);

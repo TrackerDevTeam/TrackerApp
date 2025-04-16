@@ -9,58 +9,10 @@ import settingsIcon from '../../assets/icon/settings.png';
 import backIcon from '../../assets/icon/back.png'; // Ajoutez cette icône
 
 const Header = ({ title }) => {
-  const navigation = useNavigation();
-  const route = useRoute();
-
-  // Déterminer dans quel écran nous sommes
-  const isProfileScreen = route.name === 'Profile';
-  const isSettingsScreen = route.name === 'Settings';
-  const isMainScreen = !isProfileScreen && !isSettingsScreen;
-
-  // Fonction pour naviguer vers le profil
-  const goToProfile = () => {
-    navigation.navigate('Profile');
-  };
-
-  // Fonction pour naviguer vers les paramètres
-  const goToSettings = () => {
-    navigation.navigate('Settings');
-  };
-
-  // Fonction pour revenir en arrière
-  const goBack = () => {
-    navigation.goBack();
-  };
-
   return (
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.headerContainer}>
-          {/* Bouton gauche */}
-          <TouchableOpacity
-              style={styles.headerButton}
-              onPress={isMainScreen ? goToProfile : goBack}
-          >
-            <Image
-                source={isMainScreen ? profileIcon : backIcon}
-                style={styles.headerIcon}
-            />
-          </TouchableOpacity>
-
-          {/* Titre */}
-          <Text style={styles.title}>
-            {isProfileScreen ? 'Profil' : isSettingsScreen ? 'Paramètres' : title || 'Accueil'}
-          </Text>
-
-          {/* Bouton droit - paramètres sur les écrans principaux, rien ou autre chose sur les écrans Profile/Settings */}
-          {isMainScreen ? (
-              <TouchableOpacity style={styles.headerButton} onPress={goToSettings}>
-                <Image source={settingsIcon} style={styles.headerIcon} />
-              </TouchableOpacity>
-          ) : (
-                  <View style={styles.headerButton} />
-          )}
-        </View>
-      </SafeAreaView>
+      <View style={{ padding: 16, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#ccc' }}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>{title}</Text>
+      </View>
   );
 };
 

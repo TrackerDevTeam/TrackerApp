@@ -403,16 +403,14 @@ const NutritionScreen = () => {
             </View>
           </View>
 
-          {/* Bouton pour ajouter un aliment */}
           <TouchableOpacity
               style={[styles.addMealButton, { backgroundColor: '#005EA6' }]} // Même couleur que "Réinitialiser"
               onPress={() => setModalVisible(true)}
           >
-            <Ionicons name="add-circle" size={24} color="#FFF" /> {/* Icône en blanc */}
+            <Ionicons name="add-circle" size={24} color="#FFF" />
             <Text style={[styles.addMealButtonText, { color: '#FFF' }]}>Ajouter un aliment</Text>
           </TouchableOpacity>
 
-          {/* Bouton pour réinitialiser les données */}
           <TouchableOpacity
               style={[styles.addMealButton, { backgroundColor: '#005EA6' }]} // Même couleur
               onPress={resetNutritionData}
