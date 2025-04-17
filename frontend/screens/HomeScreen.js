@@ -77,7 +77,7 @@ const HomeScreen = () => {
     const fetchInsight = async () => {
       try {
         // Remplacez l'URL par celle de votre backend (attention en environnement mobile)
-        const response = await fetch("http://10.5.8.55:5000/insight");
+        const response = await fetch("http://172.20.10.2:5000/insight");
         if (response.ok) {
           const data = await response.json();
           setInsight(data.insight);

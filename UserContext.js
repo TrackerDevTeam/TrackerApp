@@ -8,7 +8,7 @@ export const UserProvider = ({ children }) => {
 
     useEffect(() => {
         const today = new Date();
-        const dateString = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+        const dateString = `${today.getFullYear()}_${String(today.getMonth() + 1).padStart(2, '0')}_${String(today.getDate()).padStart(2, '0')}`;
         setDate(dateString);
     }, []);
 

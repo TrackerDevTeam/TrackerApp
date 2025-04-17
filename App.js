@@ -12,8 +12,12 @@ const App = () => {
 
   useEffect(() => {
     const initializeApp = async () => {
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}_${String(today.getMonth() + 1).padStart(2, '0')}_${String(today.getDate()).padStart(2, '0')}`;
+      setDate(formattedDate);
+
       await checkAndCreateUser(userId);
-      await checkAndCreateCollectionForToday(userId);
+      await checkAndCreateCollectionForToday(userId, formattedDate);
       setIsInitialized(true);
     };
 
@@ -38,12 +42,8 @@ const App = () => {
     }
   };
 
-  const checkAndCreateCollectionForToday = async (userId) => {
+  const checkAndCreateCollectionForToday = async (userId, dateString) => {
     try {
-      const today = new Date();
-      const dateString = `${String(today.getDate()).padStart(2, '0')}_${String(today.getMonth() + 1).padStart(2, '0')}_${today.getFullYear()}`;
-      setDate(dateString); // Mettre à jour la date dans le contexte
-
       const dateCollectionRef = collection(db, `users/${userId}/${dateString}`);
       const querySnapshot = await getDocs(dateCollectionRef);
       if (querySnapshot.empty) {
@@ -65,7 +65,7 @@ const App = () => {
   };
 
   return (
-      <UserProvider value={{ userId, date }}>
+      <UserProvider>
         <View style={styles.container}>
           {!isInitialized ? (
               <Text>Initialisation en cours...</Text>

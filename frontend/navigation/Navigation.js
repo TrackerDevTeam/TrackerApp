@@ -10,7 +10,6 @@ import NutritionScreen from '../screens/NutritionScreen';
 import WatchScreen from '../screens/WatchScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/SettingsScreen';
 import StartSleepScreen from '../screens/StartSleepScreen';
 import SleepScreen from '../screens/SleepScreen';
 
@@ -104,8 +103,8 @@ const Navigation = () => {
                 }}
             >
                 <Stack.Screen name="Main" component={TabScreens} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="Settings" component={SettingsScreen} />
+{/*                <Stack.Screen name="Profile" component={ProfileScreen} />
+                <Stack.Screen name="Settings" component={SettingsScreen} />*/}
             </Stack.Navigator>
         </NavigationContainer>
     );

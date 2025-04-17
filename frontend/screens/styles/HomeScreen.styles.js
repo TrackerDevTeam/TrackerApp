@@ -1,16 +1,16 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  container: { 
+  container: {
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
     justifyContent: 'center',
   },
-  content: { 
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   userTitle: {
     fontSize: 25,
@@ -77,6 +77,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 3,
+    minHeight: 200, // ajoute ça 👈
   },
   insightTitle: {
     fontSize: 18,
