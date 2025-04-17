@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, PermissionsAndroid, Platform, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
-import { Buffer } from 'buffer'; // Importer Buffer
+import { Buffer } from 'buffer';
 import Header from '../components/common/Header';
+import { LineChart } from 'react-native-chart-kit';
+import styles from './styles/WatchScreen.styles'; // Importer les styles
+import { PermissionsAndroid, Platform, Alert } from 'react-native';
 
 // UUIDs correspondant à ceux dans bluetooth.cpp
 const SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
@@ -16,6 +19,9 @@ const WatchScreen = () => {
   const [spo2, setSpo2] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('Déconnecté');
+  const [bpmData, setBpmData] = useState([]);
+  const [spo2Data, setSpo2Data] = useState([]);
+  const [labels, setLabels] = useState([]);
 
   useEffect(() => {
     const init = async () => {
@@ -49,9 +55,6 @@ const WatchScreen = () => {
       const allGranted = Object.values(granted).every(
           value => value === PermissionsAndroid.RESULTS.GRANTED
       );
-      if (!allGranted) {
-        console.warn("Certaines permissions Bluetooth n'ont pas été accordées.");
-      }
       return allGranted;
     } catch (err) {
       console.warn("Erreur lors de la demande de permissions :", err);
@@ -61,15 +64,22 @@ const WatchScreen = () => {
 
   const enableDataCollection = async (device) => {
     try {
-      // Envoyer la valeur 1 encodée en Base64
       const value = Buffer.from([1]).toString('base64');
+      const services = await device.services();
+      const controlService = services.find(service => service.uuid === SERVICE_UUID);
 
-      // Utiliser writeCharacteristicWithoutResponse au lieu de writeCharacteristicWithResponseForDevice
-      await device.writeCharacteristicWithoutResponse(
-          SERVICE_UUID,
-          CONTROL_CHARACTERISTIC_UUID,
-          value
-      );
+      if (!controlService) {
+        throw new Error("Service non trouvé");
+      }
+
+      const characteristics = await controlService.characteristics();
+      const controlCharacteristic = characteristics.find(char => char.uuid === CONTROL_CHARACTERISTIC_UUID);
+
+      if (!controlCharacteristic) {
+        throw new Error("Caractéristique de contrôle non trouvée");
+      }
+
+      await controlCharacteristic.writeWithResponse(value);
       console.log("Collecte de données activée");
     } catch (error) {
       console.log("Erreur lors de l'activation de la collecte:", error.message);
@@ -78,7 +88,6 @@ const WatchScreen = () => {
 
   const parseData = (data) => {
     try {
-      console.log("Données reçues avant parsing:", data);
       const parts = data.split(",");
       const bpmPart = parts.find(part => part.startsWith("BPM:"));
       const spo2Part = parts.find(part => part.startsWith("SPO2:"));
@@ -102,8 +111,6 @@ const WatchScreen = () => {
       let deviceFound = false;
 
       manager.startDeviceScan(null, null, (error, device) => {
-        console.log("Scan en cours...", device ? device.name : "Pas d'appareil");
-
         if (error) {
           console.log("Erreur de scan:", error.message);
           setConnectionStatus('Erreur de scan: ' + error.message);
@@ -115,19 +122,16 @@ const WatchScreen = () => {
           deviceFound = true;
           manager.stopDeviceScan();
           setConnectionStatus('Appareil trouvé, connexion en cours...');
-          console.log("Appareil trouvé:", device.name);
 
           device.connect()
               .then((connected) => {
-                console.log("Connecté à:", connected.name);
                 setConnectionStatus('Connecté à ' + connected.name);
                 return connected.discoverAllServicesAndCharacteristics();
               })
               .then((connected) => {
                 setConnectedDevice(connected);
-                enableDataCollection(connected); // Activer la collecte automatiquement
+                enableDataCollection(connected);
 
-                // Configurer la notification pour recevoir les données
                 return connected.monitorCharacteristicForService(
                     SERVICE_UUID,
                     CHARACTERISTIC_UUID,
@@ -136,22 +140,20 @@ const WatchScreen = () => {
                         console.log("Erreur de surveillance:", error.message);
                         return;
                       }
-                      console.log("Caractéristique surveillée, valeur brute:", characteristic?.value);
                       if (characteristic && characteristic.value) {
                         const decodedValue = Buffer.from(characteristic.value, 'base64').toString('utf8');
                         const parsed = parseData(decodedValue);
                         if (parsed) {
                           if (parsed.bpm >= 40 && parsed.bpm <= 220) {
                             setBpm(parsed.bpm);
-                            console.log("BPM mis à jour:", parsed.bpm);
+                            setBpmData(prev => [...prev, parsed.bpm].slice(-10));
                           }
                           if (parsed.spo2 >= 70 && parsed.spo2 <= 100) {
                             setSpo2(parsed.spo2);
-                            console.log("SpO2 mis à jour:", parsed.spo2);
+                            setSpo2Data(prev => [...prev, parsed.spo2].slice(-10));
                           }
+                          setLabels(prev => [...prev, new Date().toLocaleTimeString()].slice(-10));
                         }
-                      } else {
-                        console.log("Aucune valeur reçue ou caractéristique invalide");
                       }
                     }
                 );
@@ -169,7 +171,6 @@ const WatchScreen = () => {
       setTimeout(() => {
         if (!deviceFound) {
           manager.stopDeviceScan();
-          console.log("Appareil M5Stack_BLE non trouvé après 10s.");
           setConnectionStatus('Appareil non trouvé');
           setIsConnecting(false);
         }
@@ -188,6 +189,9 @@ const WatchScreen = () => {
         setConnectedDevice(null);
         setBpm(null);
         setSpo2(null);
+        setBpmData([]);
+        setSpo2Data([]);
+        setLabels([]);
         setConnectionStatus('Déconnecté');
       } catch (error) {
         console.log("Erreur lors de la déconnexion:", error.message);
@@ -195,130 +199,106 @@ const WatchScreen = () => {
     }
   };
 
+  const chartConfig = {
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '6',
+      strokeWidth: '2',
+      stroke: '#ffa726',
+    },
+  };
+
   return (
       <View style={styles.container}>
         <Header title="Watch" />
-        <Text style={styles.title}>Données du capteur M5StickC</Text>
+        <ScrollView contentContainerStyle={styles.content}>
+          <Text style={styles.title}>Données du capteur M5StickC</Text>
 
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusText}>Status: {connectionStatus}</Text>
-        </View>
+          <View style={styles.statusContainer}>
+            <Text style={styles.statusText}>Status: {connectionStatus}</Text>
+          </View>
 
-        {connectedDevice && (
-            <View style={styles.dataContainer}>
-              <View style={styles.cardContainer}>
-                <Text style={styles.cardTitle}>Fréquence cardiaque</Text>
-                <Text style={styles.dataValue}>{bpm !== null ? bpm : '--'}</Text>
-                <Text style={styles.dataUnit}>BPM</Text>
-              </View>
-              <View style={styles.cardContainer}>
-                <Text style={styles.cardTitle}>Saturation en oxygène</Text>
-                <Text style={styles.dataValue}>{spo2 !== null ? spo2 : '--'}</Text>
-                <Text style={styles.dataUnit}>%</Text>
-              </View>
-            </View>
-        )}
+          {connectedDevice && (
+              <>
+                <View style={styles.dataContainer}>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cardTitle}>Fréquence cardiaque</Text>
+                    <Text style={styles.dataValue}>{bpm !== null ? bpm : '--'}</Text>
+                    <Text style={styles.dataUnit}>BPM</Text>
+                  </View>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cardTitle}>Saturation en oxygène</Text>
+                    <Text style={styles.dataValue}>{spo2 !== null ? spo2 : '--'}</Text>
+                    <Text style={styles.dataUnit}>%</Text>
+                  </View>
+                </View>
 
-        {connectedDevice && (
-            <TouchableOpacity
-                style={styles.disconnectButton}
-                onPress={disconnectDevice}
-            >
-              <Text style={styles.disconnectButtonText}>Déconnecter</Text>
-            </TouchableOpacity>
-        )}
+                <View style={styles.chartContainer}>
+                  <Text style={styles.chartTitle}>Évolution de la fréquence cardiaque (BPM)</Text>
+                  <LineChart
+                      data={{
+                        labels: labels.length > 0 ? labels : ['0'],
+                        datasets: [
+                          {
+                            data: bpmData.length > 0 ? bpmData : [0],
+                            color: (opacity = 1) => `rgba(255, 99, 132, ${opacity})`,
+                            strokeWidth: 2,
+                          },
+                        ],
+                      }}
+                      width={Dimensions.get('window').width - 40}
+                      height={180}
+                      chartConfig={chartConfig}
+                      bezier
+                      style={styles.chart}
+                  />
+                </View>
 
-        {!connectedDevice && !isConnecting && (
-            <TouchableOpacity
-                style={styles.connectButton}
-                onPress={connectToDevice}
-            >
-              <Text style={styles.connectButtonText}>Rechercher M5Stack</Text>
-            </TouchableOpacity>
-        )}
+                <View style={styles.chartContainer}>
+                  <Text style={styles.chartTitle}>Évolution de la saturation en oxygène (SpO2)</Text>
+                  <LineChart
+                      data={{
+                        labels: labels.length > 0 ? labels : ['0'],
+                        datasets: [
+                          {
+                            data: spo2Data.length > 0 ? spo2Data : [0],
+                            color: (opacity = 1) => `rgba(54, 162, 235, ${opacity})`,
+                            strokeWidth: 2,
+                          },
+                        ],
+                      }}
+                      width={Dimensions.get('window').width - 40}
+                      height={180}
+                      chartConfig={chartConfig}
+                      bezier
+                      style={styles.chart}
+                  />
+                </View>
+              </>
+          )}
+
+          {connectedDevice && (
+              <TouchableOpacity style={styles.disconnectButton} onPress={disconnectDevice}>
+                <Text style={styles.disconnectButtonText}>Déconnecter</Text>
+              </TouchableOpacity>
+          )}
+
+          {!connectedDevice && !isConnecting && (
+              <TouchableOpacity style={styles.connectButton} onPress={connectToDevice}>
+                <Text style={styles.connectButtonText}>Rechercher M5Stack</Text>
+              </TouchableOpacity>
+          )}
+        </ScrollView>
       </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F5F5'
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center'
-  },
-  statusContainer: {
-    backgroundColor: '#E0E0E0',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20
-  },
-  statusText: {
-    fontSize: 16,
-    textAlign: 'center'
-  },
-  dataContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 30
-  },
-  cardContainer: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 20,
-    flex: 0.48,
-    alignItems: 'center',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-  },
-  cardTitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 10
-  },
-  dataValue: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#333'
-  },
-  dataUnit: {
-    fontSize: 16,
-    color: '#888',
-    marginTop: 5
-  },
-  connectButton: {
-    backgroundColor: '#4285F4',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center'
-  },
-  connectButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  disconnectButton: {
-    backgroundColor: '#FF5252',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center'
-  },
-  disconnectButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold'
-  }
-});
 
 export default WatchScreen;

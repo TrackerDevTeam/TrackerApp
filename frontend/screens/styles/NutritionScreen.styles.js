@@ -1,142 +1,305 @@
-// NutritionScreen.styles.js
-import { StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { BleManager } from 'react-native-ble-plx';
+import { Buffer } from 'buffer';
+import Header from '../../components/common/Header';
+import { LineChart } from 'react-native-chart-kit';
+import styles from '../styles/WatchScreen.styles';
+import { PermissionsAndroid, Platform, Alert } from 'react-native';
 
-export default StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F8FA', // Fond gris-bleu très clair
-  },
-  scrollContainer: {
-    flex: 1,
-    padding: 16,
-  },
-  totalsContainer: {
-    backgroundColor: '#E6F0FA', // Bleu très clair pour le fond
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#CDE4F5', // Bordure subtile
-  },
-  totalsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#003087', // Bleu foncé PayPal pour les titres
-  },
-  totalsContent: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  totalItem: {
-    width: '50%',
-    marginBottom: 5,
-    fontWeight: '500',
-    color: '#000000', // Bleu moyen pour le texte
-  },
-  addMealButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#009CDE', // Bleu clair PayPal
-    padding: 10,
-    borderRadius: 8,
-    marginVertical: 10,
-    justifyContent: 'center',
-  },
-  addMealButtonText: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#FFFFFF', // Texte blanc pour contraste
-    fontWeight: 'bold',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 20,
-    width: '80%',
-    maxHeight: '80%',
-    borderWidth: 1,
-    borderColor: '#CDE4F5', // Bordure subtile
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-    color: '#003087', // Bleu foncé PayPal
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 5,
-    color: '#005EA6', // Bleu moyen
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#CDE4F5', // Bordure bleu clair
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
-    backgroundColor: '#F5F8FA', // Fond gris-bleu clair
-    color: '#003087', // Texte bleu foncé
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  modalButton: {
-    flex: 1,
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  cancelButton: {
-    backgroundColor: '#E6F0FA', // Bleu très clair
-  },
-  cancelButtonText: {
-    color: '#005EA6', // Bleu moyen
-    fontWeight: 'bold',
-  },
-  saveButton: {
-    backgroundColor: '#0070BA', // Bleu principal PayPal
-  },
-  saveButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  suggestionsContainer: {
-    maxHeight: 150,
-    width: '100%',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#CDE4F5', // Bordure bleu clair
-    borderRadius: 5,
-    backgroundColor: '#F5F8FA', // Fond gris-bleu clair
-  },
-  suggestionsList: {
-    width: '100%',
-  },
-  suggestionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E6F0FA', // Séparateur bleu clair
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  suggestionText: {
-    fontSize: 16,
-    color: '#003087', // Bleu foncé
-  },
-  suggestionDetails: {
-    fontSize: 14,
-    color: '#005EA6', // Bleu moyen
-  },
-});
+// UUIDs correspondant à ceux dans bluetooth.cpp
+const SERVICE_UUID = "12345678-1234-1234-1234-1234567890ab";
+const CHARACTERISTIC_UUID = "abcd1234-1234-1234-1234-abcdef123456";
+const CONTROL_CHARACTERISTIC_UUID = "123e4567-e89b-12d3-a456-426614174000";
+
+const WatchScreen = () => {
+  const [manager] = useState(new BleManager());
+  const [connectedDevice, setConnectedDevice] = useState(null);
+  const [bpm, setBpm] = useState(null);
+  const [spo2, setSpo2] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('Déconnecté');
+  const [bpmData, setBpmData] = useState([]);
+  const [spo2Data, setSpo2Data] = useState([]);
+  const [labels, setLabels] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      if (Platform.OS === 'android') {
+        const granted = await requestPermissions();
+        if (!granted) {
+          Alert.alert("Permissions requises", "Veuillez accorder les permissions Bluetooth et Localisation.");
+        }
+      }
+    };
+    init();
+
+    return () => {
+      if (connectedDevice) {
+        console.log("Déconnexion de l'appareil...");
+        connectedDevice.cancelConnection();
+      }
+      manager.stopDeviceScan();
+      manager.destroy();
+    };
+  }, []);
+
+  const requestPermissions = async () => {
+    try {
+      const permissions = [
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      ];
+      const granted = await PermissionsAndroid.requestMultiple(permissions);
+      const allGranted = Object.values(granted).every(
+          value => value === PermissionsAndroid.RESULTS.GRANTED
+      );
+      return allGranted;
+    } catch (err) {
+      console.warn("Erreur lors de la demande de permissions :", err);
+      return false;
+    }
+  };
+
+  const enableDataCollection = async (device) => {
+    try {
+      const value = Buffer.from([1]).toString('base64');
+      const services = await device.services();
+      const controlService = services.find(service => service.uuid === SERVICE_UUID);
+
+      if (!controlService) {
+        throw new Error("Service non trouvé");
+      }
+
+      const characteristics = await controlService.characteristics();
+      const controlCharacteristic = characteristics.find(char => char.uuid === CONTROL_CHARACTERISTIC_UUID);
+
+      if (!controlCharacteristic) {
+        throw new Error("Caractéristique de contrôle non trouvée");
+      }
+
+      await controlCharacteristic.writeWithResponse(value);
+      console.log("Collecte de données activée");
+    } catch (error) {
+      console.log("Erreur lors de l'activation de la collecte:", error.message);
+    }
+  };
+
+  const parseData = (data) => {
+    try {
+      const parts = data.split(",");
+      const bpmPart = parts.find(part => part.startsWith("BPM:"));
+      const spo2Part = parts.find(part => part.startsWith("SPO2:"));
+      if (bpmPart && spo2Part) {
+        const newBpm = parseInt(bpmPart.replace("BPM:", ""));
+        const newSpo2 = parseInt(spo2Part.replace("SPO2:", ""));
+        return { bpm: newBpm, spo2: newSpo2 };
+      }
+    } catch (e) {
+      console.log("Erreur de parsing:", e.message);
+    }
+    return null;
+  };
+
+  const connectToDevice = async () => {
+    setIsConnecting(true);
+    setConnectionStatus('Recherche en cours...');
+    console.log("Démarrage du scan d'appareils...");
+
+    try {
+      let deviceFound = false;
+
+      manager.startDeviceScan(null, null, (error, device) => {
+        if (error) {
+          console.log("Erreur de scan:", error.message);
+          setConnectionStatus('Erreur de scan: ' + error.message);
+          setIsConnecting(false);
+          return;
+        }
+
+        if (device && device.name === "M5Stack_BLE") {
+          deviceFound = true;
+          manager.stopDeviceScan();
+          setConnectionStatus('Appareil trouvé, connexion en cours...');
+
+          device.connect()
+              .then((connected) => {
+                setConnectionStatus('Connecté à ' + connected.name);
+                return connected.discoverAllServicesAndCharacteristics();
+              })
+              .then((connected) => {
+                setConnectedDevice(connected);
+                enableDataCollection(connected);
+
+                return connected.monitorCharacteristicForService(
+                    SERVICE_UUID,
+                    CHARACTERISTIC_UUID,
+                    (error, characteristic) => {
+                      if (error) {
+                        console.log("Erreur de surveillance:", error.message);
+                        return;
+                      }
+                      if (characteristic && characteristic.value) {
+                        const decodedValue = Buffer.from(characteristic.value, 'base64').toString('utf8');
+                        const parsed = parseData(decodedValue);
+                        if (parsed) {
+                          if (parsed.bpm >= 40 && parsed.bpm <= 220) {
+                            setBpm(parsed.bpm);
+                            setBpmData(prev => [...prev, parsed.bpm].slice(-10));
+                          }
+                          if (parsed.spo2 >= 70 && parsed.spo2 <= 100) {
+                            setSpo2(parsed.spo2);
+                            setSpo2Data(prev => [...prev, parsed.spo2].slice(-10));
+                          }
+                          setLabels(prev => [...prev, new Date().toLocaleTimeString()].slice(-10));
+                        }
+                      }
+                    }
+                );
+              })
+              .catch((e) => {
+                console.log("Erreur de connexion:", e.message);
+                setConnectionStatus('Échec de connexion: ' + e.message);
+              })
+              .finally(() => {
+                setIsConnecting(false);
+              });
+        }
+      });
+
+      setTimeout(() => {
+        if (!deviceFound) {
+          manager.stopDeviceScan();
+          setConnectionStatus('Appareil non trouvé');
+          setIsConnecting(false);
+        }
+      }, 10000);
+    } catch (e) {
+      console.log("Erreur lors de la tentative de connexion:", e.message);
+      setConnectionStatus('Erreur: ' + e.message);
+      setIsConnecting(false);
+    }
+  };
+
+  const disconnectDevice = async () => {
+    if (connectedDevice) {
+      try {
+        await connectedDevice.cancelConnection();
+        setConnectedDevice(null);
+        setBpm(null);
+        setSpo2(null);
+        setBpmData([]);
+        setSpo2Data([]);
+        setLabels([]);
+        setConnectionStatus('Déconnecté');
+      } catch (error) {
+        console.log("Erreur lors de la déconnexion:", error.message);
+      }
+    }
+  };
+
+  const chartConfig = {
+    backgroundColor: '#000000',
+    backgroundGradientFrom: '#1C2526',
+    backgroundGradientTo: '#000000',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '5',
+      strokeWidth: '2',
+      stroke: '#FFFFFF',
+    },
+    withHorizontalLabels: false, // Hide X-axis labels
+  };
+
+  return (
+      <View style={styles.container}>
+        <Header title="Watch" />
+        <ScrollView contentContainerStyle={styles.content}>
+          <Text style={styles.title}>Moniteur de Santé</Text>
+
+          <View style={styles.statusContainer}>
+            <Text style={styles.statusText}>Statut: {connectionStatus}</Text>
+          </View>
+
+          <View style={styles.dataContainer}>
+            <View style={[styles.cardContainer, { backgroundColor: '#FF6B6B' }]}>
+              <Text style={styles.cardTitle}>Fréquence Cardiaque</Text>
+              <Text style={styles.dataValue}>{bpm !== null ? bpm : '--'}</Text>
+              <Text style={styles.dataUnit}>BPM</Text>
+            </View>
+            <View style={[styles.cardContainer, { backgroundColor: '#4ECDC4' }]}>
+              <Text style={styles.cardTitle}>Saturation en Oxygène</Text>
+              <Text style={styles.dataValue}>{spo2 !== null ? spo2 : '--'}</Text>
+              <Text style={styles.dataUnit}>%</Text>
+            </View>
+          </View>
+
+          <View style={styles.chartContainer}>
+            <Text style={styles.chartTitle}>Fréquence Cardiaque (BPM)</Text>
+            <LineChart
+                data={{
+                  labels: labels.length > 0 ? labels : ['--'],
+                  datasets: [
+                    {
+                      data: bpmData.length > 0 ? bpmData : [0],
+                      color: (opacity = 1) => `rgba(255, 107, 107, ${opacity})`,
+                      strokeWidth: 3,
+                    },
+                  ],
+                }}
+                width={Dimensions.get('window').width - 32}
+                height={200}
+                chartConfig={chartConfig}
+                bezier
+                style={styles.chart}
+            />
+          </View>
+
+          <View style={styles.chartContainer}>
+            <Text style={styles.chartTitle}>Saturation en Oxygène (SpO2)</Text>
+            <LineChart
+                data={{
+                  labels: labels.length > 0 ? labels : ['--'],
+                  datasets: [
+                    {
+                      data: spo2Data.length > 0 ? spo2Data : [0],
+                      color: (opacity = 1) => `rgba(78, 205, 196, ${opacity})`,
+                      strokeWidth: 3,
+                    },
+                  ],
+                }}
+                width={Dimensions.get('window').width - 32}
+                height={200}
+                chartConfig={chartConfig}
+                bezier
+                style={styles.chart}
+            />
+          </View>
+
+          {connectedDevice ? (
+              <TouchableOpacity style={styles.disconnectButton} onPress={disconnectDevice}>
+                <Text style={styles.buttonText}>Déconnecter</Text>
+              </TouchableOpacity>
+          ) : (
+              <TouchableOpacity
+                  style={[styles.connectButton, isConnecting && styles.disabledButton]}
+                  onPress={connectToDevice}
+                  disabled={isConnecting}
+              >
+                <Text style={styles.buttonText}>
+                  {isConnecting ? 'Connexion...' : 'Connecter à M5Stack'}
+                </Text>
+              </TouchableOpacity>
+          )}
+        </ScrollView>
+      </View>
+  );
+};
+
+export default WatchScreen;
