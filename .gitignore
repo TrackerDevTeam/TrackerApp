@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules/
+android/
+ios/
 backend/node_modules/
 
 # Expo
@@ -41,3 +43,5 @@ backend/nutrition/.env
 
 # Other
 .idea
+
+
