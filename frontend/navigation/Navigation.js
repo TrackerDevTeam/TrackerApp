@@ -11,7 +11,6 @@ import WatchScreen from '../screens/WatchScreen';
 import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import SleepScreen from '../screens/SleepScreen';
 import StartSleepScreen from '../screens/StartSleepScreen';
 import SleepScreen from '../screens/SleepScreen';
 
@@ -19,7 +18,6 @@ import SleepScreen from '../screens/SleepScreen';
 import homeIcon from '../assets/icon/home.png';
 import nutritionIcon from '../assets/icon/nutrition.png';
 import workoutIcon from '../assets/icon/training.png';
-import sleepIcon from '../assets/icon/sleep.png';
 import watchIcon from '../assets/icon/montre.png';
 import workoutIconFocused from '../assets/icon/training.png';
 import profileIcon from '../assets/icon/profile.png';
