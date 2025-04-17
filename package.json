@@ -13,30 +13,40 @@
     "@react-navigation/bottom-tabs": "^7.2.1",
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/stack": "^7.2.8",
+    "@react-navigation/native-stack": "^7.3.10",
     "axios": "*",
     "base-64": "^1.0.0",
     "buffer": "^6.0.3",
     "cors": "*",
     "dotenv": "^16.4.7",
     "expo": "~52.0.38",
+    "expo-asset": "~11.0.5",
+    "expo-file-system": "~18.0.12",
+    "expo-linear-gradient": "~14.0.2",
     "expo-status-bar": "~2.0.1",
     "express": "^4.21.2",
-    "firebase": "^11.5.0",
     "fs": "^0.0.1-security",
+    "firebase": "^11.6.0",
+    "firebase-admin": "^13.2.0",
+    "papaparse": "^5.5.2",
     "pm2": "^6.0.5",
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-ble-plx": "^3.5.0",
     "react-native-chart-kit": "^6.12.0",
     "react-native-gesture-handler": "^2.25.0",
+    "react-native-animatable": "^1.4.0",
+    "react-native-calendars": "^1.1263.0",
     "react-native-paper": "4.9.2",
     "react-native-safe-area-context": "^4.12.0",
+    "react-native-reanimated": "^3.17.3",
     "react-native-screens": "~4.4.0",
     "react-native-svg": "^15.8.0",
     "react-native-svg-transformer": "^1.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@react-native-community/cli": "latest"
   },
   "private": true,
   "name": "app-tracker",
@@ -44,5 +54,13 @@
   "description": "Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!",
   "keywords": [],
   "author": "",
-  "type": "commonjs"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TrackerDevTeam/TrackerApp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TrackerDevTeam/TrackerApp/issues"
+  },
+  "homepage": "https://github.com/TrackerDevTeam/TrackerApp#readme"
 }

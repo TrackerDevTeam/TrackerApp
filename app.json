@@ -34,5 +34,9 @@
     "plugins": [
       "react-native-ble-plx"
     ]
+    },
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }

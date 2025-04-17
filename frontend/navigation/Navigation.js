@@ -12,6 +12,8 @@ import WorkoutScreen from '../screens/WorkoutScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import SleepScreen from '../screens/SleepScreen';
+import StartSleepScreen from '../screens/StartSleepScreen';
+import SleepScreen from '../screens/SleepScreen';
 
 // Import des icônes
 import homeIcon from '../assets/icon/home.png';
@@ -19,9 +21,28 @@ import nutritionIcon from '../assets/icon/nutrition.png';
 import workoutIcon from '../assets/icon/training.png';
 import sleepIcon from '../assets/icon/sleep.png';
 import watchIcon from '../assets/icon/montre.png';
+import workoutIconFocused from '../assets/icon/training.png';
+import profileIcon from '../assets/icon/profile.png';
+import profileIconFocused from '../assets/icon/profile.png';
+import settingsIcon from '../assets/icon/settings.png';
+import settingsIconFocused from '../assets/icon/settings.png';
+import sleepIcon from '../assets/icon/sleep.png';
+import sleepIconFocused from '../assets/icon/sleep.png';
+// Ajoute les autres images de la même manière...
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const SleepStack = createNativeStackNavigator();
+
+const SleepStackScreen = () => (
+    <SleepStack.Navigator>
+      <SleepStack.Screen name="SleepMain" component={SleepScreen} options={{ headerShown: false }} />
+      <SleepStack.Screen name="StartSleep" component={StartSleepScreen} options={{ title: 'Démarrer une nuit' }} />
+    </SleepStack.Navigator>
+  );
+
 
 // Configuration des écrans avec tabs
 const TabScreens = () => {
@@ -69,7 +90,7 @@ const TabScreens = () => {
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Nutrition" component={NutritionScreen} />
             <Tab.Screen name="Workout" component={WorkoutScreen} />
-            <Tab.Screen name="Sleep" component={SleepScreen} />
+            <Tab.Screen name="Sleep" component={SleepStackScreen} />
             <Tab.Screen name="Watch" component={WatchScreen} />
         </Tab.Navigator>
     );
