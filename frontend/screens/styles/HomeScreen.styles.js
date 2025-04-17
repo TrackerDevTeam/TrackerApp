@@ -91,5 +91,6 @@ export default StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     fontStyle: 'italic',
+    lineHeight: 22, // pour une meilleure lisibilité
   },
 });

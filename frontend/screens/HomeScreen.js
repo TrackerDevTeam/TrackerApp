@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native'; // 👈 ajout de ScrollView
 import Header from '../components/common/Header';
 import { Calendar } from 'react-native-calendars';
 import { doc, getDoc } from 'firebase/firestore';
@@ -8,13 +8,15 @@ import { UserContext } from '../../UserContext';
 import styles from './styles/HomeScreen.styles';
 
 const HomeScreen = () => {
-  const { userId } = useContext(UserContext);
+  const {userId} = useContext(UserContext);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const [nutritionData, setNutritionData] = useState('0');
   const [sleepData, setSleepData] = useState('0');
   const [trainingData, setTrainingData] = useState('0');
-  const [insight, setInsight] = useState('');
+  const [insight, setInsight] = useState(
+      "Pour améliorer vos performances, vous devriez augmenter vos minutes de sommeil de 84.00, ajuster votre nutrition en augmentant vos calories de 560.00 calories (ce qui correspond à une augmentation de 30.00g de protéines, 70.00g de glucides et 16.00g de lipides)."
+  );
 
   const convertDateToFirebaseFormat = (dateStr) => dateStr.replace(/-/g, '_');
 
@@ -96,74 +98,81 @@ const HomeScreen = () => {
 
   const today = new Date().toISOString().split('T')[0];
   const markedDates = {
-    [today]: { selected: true, marked: true, selectedColor: 'orange' },
-    [selectedDate]: { selected: true, marked: true, selectedColor: 'blue' },
+    [today]: {selected: true, marked: true, selectedColor: 'orange'},
+    [selectedDate]: {selected: true, marked: true, selectedColor: 'blue'},
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.userTitle}>Bienvenue, {userId} !</Text>
-
-        <Calendar
+      <ScrollView
           style={{
-            borderWidth: 1,
-            borderColor: 'gray',
-            marginTop: 10,
+            flex: 1,
+            backgroundColor: '#fff',
+            padding: 20,
+            // Remove justifyContent from here
           }}
-          markedDates={markedDates}
-          onDayPress={(day) => setSelectedDate(day.dateString)}
-          theme={{
-            backgroundColor: '#ffffff',
-            calendarBackground: '#ffffff',
-            textSectionTitleColor: '#b6c1cd',
-            selectedDayBackgroundColor: '#00adf5',
-            selectedDayTextColor: '#ffffff',
-            todayTextColor: '#00adf5',
-            dayTextColor: '#2d4150',
-            textDisabledColor: '#d9e1e8',
+          contentContainerStyle={{
+            paddingBottom: 40,
+            justifyContent: 'center', // Move it here instead
           }}
-        />
+      >
+        <View>
+          <Text style={styles.userTitle}>Bienvenue, {userId} !</Text>
 
-        <Text style={styles.textResumeDay}>Résumé de la journée</Text>
-        <Text style={styles.dateSelected}>
-          {selectedDate.replace(/-/g, '/')}
-        </Text>
+          <Calendar
+              style={{
+                borderWidth: 1,
+                borderColor: 'gray',
+                marginTop: 10,
+              }}
+              markedDates={markedDates}
+              onDayPress={(day) => setSelectedDate(day.dateString)}
+              theme={{
+                backgroundColor: '#ffffff',
+                calendarBackground: '#ffffff',
+                textSectionTitleColor: '#b6c1cd',
+                selectedDayBackgroundColor: '#00adf5',
+                selectedDayTextColor: '#ffffff',
+                todayTextColor: '#00adf5',
+                dayTextColor: '#2d4150',
+                textDisabledColor: '#d9e1e8',
+              }}
+          />
 
-        <View style={styles.metricsContainer}>
-          {/* Sommeil */}
-          <View style={styles.metricItem}>
-            <View style={[styles.circle, { borderColor: '#00C4B4' }]}>
-              <Text style={styles.circleText}>{sleepData} </Text>
+          <Text style={styles.textResumeDay}>Résumé de la journée</Text>
+          <Text style={styles.dateSelected}>
+            {selectedDate.replace(/-/g, '/')}
+          </Text>
+
+          <View style={styles.metricsContainer}>
+            <View style={styles.metricItem}>
+              <View style={styles.circle}>
+                <Text style={styles.circleText}>{nutritionData}</Text>
+              </View>
+              <Text style={styles.label}>Calories</Text>
             </View>
-            <Text style={styles.label}>Sommeil</Text>
+
+            <View style={styles.metricItem}>
+              <View style={styles.circle}>
+                <Text style={styles.circleText}>{sleepData}</Text>
+              </View>
+              <Text style={styles.label}>Sommeil</Text>
+            </View>
+
+            <View style={styles.metricItem}>
+              <View style={styles.circle}>
+                <Text style={styles.circleText}>{trainingData}</Text>
+              </View>
+              <Text style={styles.label}>Tonnage</Text>
+            </View>
           </View>
 
-          {/* Nutrition */}
-          <View style={styles.metricItem}>
-            <View style={[styles.circle, { borderColor: '#FF7F50' }]}>
-              <Text style={styles.circleText}>{nutritionData} Kcal</Text>
-            </View>
-            <Text style={styles.label}>Nutrition</Text>
-          </View>
-
-          {/* Entraînement */}
-          <View style={styles.metricItem}>
-            <View style={[styles.circle, { borderColor: '#6495ED' }]}>
-              <Text style={styles.circleText}>{trainingData} kg</Text>
-            </View>
-            <Text style={styles.label}>Entraînement</Text>
+          <View style={styles.insightContainer}>
+            <Text style={styles.insightTitle}>Insight du jour :</Text>
+            <Text style={styles.insightText}>{insight}</Text>
           </View>
         </View>
-
-        {/* Affichage de l'insight dans une card stylée */}
-        <View style={styles.insightContainer}>
-          <Text style={styles.insightTitle}>Insight du jour :</Text>
-          <Text style={styles.insightText}>{insight}</Text>
-        </View>
-      </View>
-    </View>
+      </ScrollView>
   );
 };
 
-export default HomeScreen;
+  export default HomeScreen;

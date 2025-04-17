@@ -76,14 +76,15 @@ const NutritionScreen = () => {
         const nutritionRef = doc(db, `users/${userId}/${date}`, 'nutrition');
         const nutritionSnap = await getDoc(nutritionRef);
 
+// Dans la fonction loadNutritionData, où vous chargez les données de Firebase :
         if (nutritionSnap.exists()) {
           const firebaseData = nutritionSnap.data();
-          console.log('Données chargées depuis Firebase pour nouvelle date:', firebaseData);
+          console.log('Données chargées depuis Firebase:', firebaseData);
           const parsedData = {
-            calorie: parseFloat(firebaseData.calorie) || 0,
-            glucide: parseFloat(firebaseData.glucide) || 0,
-            lipide: parseFloat(firebaseData.lipide) || 0,
-            proteine: parseFloat(firebaseData.proteine) || 0,
+            calorie: parseFloat(firebaseData.calories) || 0,  // Notez le "s" ici
+            glucide: parseFloat(firebaseData.glucides) || 0,  // Notez le "s" ici
+            lipide: parseFloat(firebaseData.lipides) || 0,    // Notez le "s" ici
+            proteine: parseFloat(firebaseData.proteines) || 0, // Notez le "s" ici
           };
           setNutritionData(parsedData);
           await saveNutritionLocally(parsedData);
@@ -360,17 +361,18 @@ const NutritionScreen = () => {
     }
   };
 
-  // Synchroniser avec Firebase en écrasant le document existant
+// Synchroniser avec Firebase en écrasant le document existant
   const syncNutritionWithFirebase = async (updatedData) => {
     try {
       const nutritionRef = doc(db, `users/${userId}/${date}`, 'nutrition');
 
       // Convertir les valeurs numériques en chaînes pour Firestore
+      // et utiliser les nouveaux noms de propriétés avec "s" à la fin
       const dataToSave = {
-        calorie: updatedData.calorie.toString(),
-        glucide: updatedData.glucide.toString(),
-        lipide: updatedData.lipide.toString(),
-        proteine: updatedData.proteine.toString(),
+        calories: updatedData.calorie.toString(),
+        glucides: updatedData.glucide.toString(),
+        lipides: updatedData.lipide.toString(),
+        proteines: updatedData.proteine.toString(),
       };
 
       // Écraser le document existant avec les nouvelles données
