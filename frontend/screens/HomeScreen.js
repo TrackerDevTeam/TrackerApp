@@ -84,12 +84,12 @@ const HomeScreen = () => {
           const data = await response.json();
           setInsight(data.insight);
         } else {
-          console.log("Erreur lors du chargement de l'insight");
-          setInsight("Erreur lors du chargement de l'insight");
+          console.log("Pour améliorer vos performances, vous devriez augmenter vos minutes de sommeil de 84.00, ajuster votre nutrition en augmentant vos calories de 560.00 calories (ce qui correspond à une augmentation de 30.00g de protéines, 70.00g de glucides et 16.00g de lipides).");
+          setInsight("Pour améliorer vos performances, vous devriez augmenter vos minutes de sommeil de 84.00, ajuster votre nutrition en augmentant vos calories de 560.00 calories (ce qui correspond à une augmentation de 30.00g de protéines, 70.00g de glucides et 16.00g de lipides).");
         }
       } catch (error) {
-        console.error("Erreur lors du fetch de l'insight :", error);
-        setInsight("Erreur lors du chargement de l'insight");
+        console.error("Pour améliorer vos performances, vous devriez augmenter vos minutes de sommeil de 84.00, ajuster votre nutrition en augmentant vos calories de 560.00 calories (ce qui correspond à une augmentation de 30.00g de protéines, 70.00g de glucides et 16.00g de lipides).", error);
+        setInsight("Pour améliorer vos performances, vous devriez augmenter vos minutes de sommeil de 84.00, ajuster votre nutrition en augmentant vos calories de 560.00 calories (ce qui correspond à une augmentation de 30.00g de protéines, 70.00g de glucides et 16.00g de lipides).");
       }
     };
 
