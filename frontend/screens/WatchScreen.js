@@ -64,8 +64,8 @@ const WatchScreen = () => {
       // Envoyer la valeur 1 encodée en Base64
       const value = Buffer.from([1]).toString('base64');
 
-      // Utiliser writeCharacteristicWithoutResponseForDevice
-      await device.writeCharacteristicWithoutResponseForDevice(
+      // Utiliser writeCharacteristicWithoutResponse au lieu de writeCharacteristicWithResponseForDevice
+      await device.writeCharacteristicWithoutResponse(
           SERVICE_UUID,
           CONTROL_CHARACTERISTIC_UUID,
           value
@@ -75,7 +75,6 @@ const WatchScreen = () => {
       console.log("Erreur lors de l'activation de la collecte:", error.message);
     }
   };
-
 
   const parseData = (data) => {
     try {
