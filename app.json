@@ -30,6 +30,9 @@
         "projectId": "d76d9f02-8ced-40d7-a939-9910bdbcbb03"
       }
     },
-    "owner": "billygrosexpo"
+    "owner": "billygrosexpo",
+    "plugins": [
+      "react-native-ble-plx"
+    ]
   }
 }
